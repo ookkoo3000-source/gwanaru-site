@@ -164,21 +164,13 @@ def build_index(posts):
   <div class="subj__img"><img src="img/subject-{sk}.jpg" width="1200" height="900" alt="{esc(s["name"])} 수업 자료" loading="lazy"></div>
   <div class="subj__body"><b>{SUBJECT_ICON[sk]} {esc(s["name"])}</b><p>{esc(s["desc"])}</p></div>
 </a>''')
-    rows = []
-    for gk, g in D.GRADES.items():
-        if gk == "high":
-            rows.append(f'<tr><th>고1·2</th><td>{g["price"][0][1]}</td><td>{g["price"][1][1]}</td></tr>')
-            rows.append(f'<tr><th>고3</th><td>{g["price"][2][1]}</td><td>{g["price"][3][1]}</td></tr>')
-        else:
-            rows.append(f'<tr><th>{g["name"]}</th><td>{g["price"][0][1]}</td><td>{g["price"][1][1]}</td></tr>')
-    table = '<table><thead><tr><th>학년</th><th>주 1회</th><th>주 2회</th></tr></thead><tbody>' + "".join(rows) + '</tbody></table>'
     latest = "".join(f'''<a class="post-card" href="blog/{p["slug"]}/"><time datetime="{p["date"].isoformat()}">{p["date"].strftime("%Y.%m.%d")}</time><b>{esc(p["title"])}</b><p>{esc(p["desc"][:80])}</p><span class="more">읽어 보기 →</span></a>''' for p in posts[:3]) or '<p class="muted">첫 글을 준비하고 있습니다.</p>'
     page = read("templates/index.html")
     page = (page.replace("{{HEADER}}", header("")).replace("{{FOOTER}}", footer(""))
                 .replace("{{SITE_URL}}", D.SITE_URL).replace("{{SITE_NAME}}", D.SITE_NAME).replace("{{NAVER_VERIFY}}", D.NAVER_VERIFY)
                 .replace("{{FONTS}}", FONTS).replace("{{FAVICON}}", FAVICON)
                 .replace("{{GRADE_CARDS}}", "\n".join(grade_cards)).replace("{{SUBJECT_CARDS}}", "\n".join(subject_cards))
-                .replace("{{PRICE_TABLE}}", table).replace("{{LATEST_POSTS}}", latest)
+                .replace("{{LATEST_POSTS}}", latest)
                 .replace("{{FAQ}}", faq_html(D.FAQ)).replace("{{FAQ_LD}}", json.dumps(faq_ld(D.FAQ), ensure_ascii=False)))
     write("index.html", page)
     pages.append(("", TODAY, "1.0"))
