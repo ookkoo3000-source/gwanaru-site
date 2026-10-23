@@ -48,17 +48,14 @@ def head(title, desc, path, extra="", depth=1, jsonld=None, og_type="website"):
 <meta property="og:locale" content="ko_KR">
 {extra}
 <link rel="alternate" type="application/rss+xml" title="{D.SITE_NAME} 블로그" href="{D.SITE_URL}/rss.xml">
+{FAVICON}
 {FONTS}
-<link rel="stylesheet" href="{rel}css/base.css">
 <link rel="stylesheet" href="{rel}css/site.css">
 <script>document.documentElement.classList.add('js')</script>
 {ld}
 </head>
 <body>
-<header class="top page-top">
-  <a class="top__mark" href="{rel}">{D.SITE_NAME}</a>
-  <nav><a class="top__link" href="{rel}blog/">블로그</a><span aria-hidden="true"> · </span><a class="top__link tel" href="tel:{D.PHONE_RAW}">{D.PHONE}</a></nav>
-</header>
+{header(rel)}
 <main>
 """
 
@@ -69,27 +66,24 @@ def aside(depth=1, links=()):
   <div class="aside-card">
     <h2>무료 상담 신청</h2>
     <p>학년, 과목, 지역, 원하는 요일만 알려주세요. 2~3일 안에 선생님 후보를 안내하고 첫 수업은 무료 체험입니다.</p>
-    <a class="button" href="tel:{D.PHONE_RAW}">전화 {D.PHONE}</a>
-    <a class="button button--ink" href="sms:{D.PHONE_RAW}">문자로 신청</a>
+    <a class="btn btn--yellow" href="sms:{D.PHONE_RAW}">💬 문자로 무료 체험 신청</a>
+    <a class="btn btn--brand" href="tel:{D.PHONE_RAW}">📞 {D.PHONE}</a>
+  </div>
+  <div class="aside-links">
+    <h3>함께 보기</h3>
     <ul>{li}</ul>
   </div>
 </aside>"""
 
 def foot(depth=1):
-    rel = "../" * depth
     return f"""</main>
-<footer class="pagefoot">
-  <span>© 2026 {D.SITE_NAME} · <a href="tel:{D.PHONE_RAW}">{D.PHONE}</a></span>
-  <span><a href="{rel}">홈</a> · <a href="{rel}blog/">블로그</a> · <a href="{rel}sitemap.xml">사이트맵</a> · <a href="{rel}rss.xml">RSS</a></span>
-</footer>
-<script src="{rel}js/base.js" defer></script>
-<script src="{rel}js/site.js" defer></script>
+{footer("../" * depth)}
 </body>
 </html>
 """
 
 def faq_html(items):
-    return "\n".join(f'<p><dfn>{esc(q)}</dfn> {esc(a)}</p>' for q, a in items)
+    return "\n".join(f'<details class="qa"><summary>{esc(q)}</summary><p>{esc(a)}</p></details>' for q, a in items)
 
 def faq_ld(items):
     return {"@context": "https://schema.org", "@type": "FAQPage",
@@ -102,117 +96,94 @@ def crumbs(depth, *parts):
         out.append(f'<a href="{rel}{h}">{esc(t)}</a>' if h else esc(t))
     return '<p class="crumbs">' + " › ".join(out) + "</p>"
 
-FONTS = """<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://api.fontshare.com">
-<link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link href="https://api.fontshare.com/v2/css?f[]=gambarino@400&f[]=general-sans@400,500&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600&display=swap" rel="stylesheet">
+FONTS = """<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">"""
 
-FS = "Noto Serif KR, Noto Serif CJK KR, serif"          # display face in drawings
-FT = "Pretendard, Noto Sans KR, Noto Sans CJK KR, sans-serif"  # text face in drawings
-INK, MUTED, SURF, SURF2, SURF3, PAPER = "#06525c", "#2f737d", "#ebf0ee", "#dde6e3", "#cbd9d5", "#ffffff"
+FAVICON = """<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230e8f86'/%3E%3Cpath d='M6 19c3-3 6-3 10 0s7 3 10 0' stroke='%23fff' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Cpath d='M6 13c3-3 6-3 10 0s7 3 10 0' stroke='%23ffd43b' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">"""
 
-def pic(src, w, h, alt, draw, lazy=True):
-    """A photograph slot with a drawn fallback: the drawing shows only when the file is missing."""
-    lz = ' loading="lazy"' if lazy else ' fetchpriority="high"'
-    return (f'<div class="pic"><img src="{src}" width="{w}" height="{h}" alt="{esc(alt)}"{lz} '
-            f'onerror="this.parentNode.classList.add(\'is-missing\')"><div class="pic__draw">{draw}</div></div>')
+LOGO_MARK = ('<svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#0e8f86"/>'
+             '<path d="M6 19c3-3 6-3 10 0s7 3 10 0" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>'
+             '<path d="M6 13c3-3 6-3 10 0s7 3 10 0" stroke="#ffd43b" stroke-width="3" fill="none" stroke-linecap="round"/></svg>')
 
-def svg_hero():
-    return (f'<svg viewBox="0 0 1500 1000"><rect width="1500" height="1000" fill="{SURF}"/>'
-            f'<rect x="150" y="180" width="900" height="640" fill="{PAPER}"/>'
-            + "".join(f'<rect x="210" y="{260+i*64}" width="{w}" height="14" fill="{SURF2}"/>' for i, w in enumerate([700, 560, 640, 420, 600, 520, 300]))
-            + f'<rect x="210" y="324" width="560" height="14" fill="{MUTED}"/>'
-            f'<path d="M1010 420 l260 -60 l26 18 l-260 60 z" fill="{INK}"/><path d="M1270 360 l26 18 l30 -8 l-34 -24 z" fill="{MUTED}"/>'
-            f'<circle cx="1180" cy="760" r="90" fill="{SURF3}"/><rect x="1120" y="640" width="120" height="60" fill="{SURF2}"/></svg>')
+def header(rel=""):
+    nav = [("초등 과외", "elementary/"), ("중등 과외", "middle/"), ("고등 과외", "high/"), ("화상과외", "online/"),
+           ("방문과외", "visit/"), ("과외 비용", "cost/"), ("블로그", "blog/")]
+    links = "".join(f'<a href="{rel}{h}">{esc(t)}</a>' for t, h in nav)
+    home = rel or "./"
+    return f"""<header class="site-head">
+  <div class="container site-head__in">
+    <a class="logo" href="{home}">{LOGO_MARK}<span>{D.SITE_NAME}</span></a>
+    <nav class="gnb" id="gnb" aria-label="주요 메뉴">{links}</nav>
+    <a class="btn btn--brand btn--sm head-tel" href="tel:{D.PHONE_RAW}">📞 {D.PHONE}</a>
+    <button class="menu-btn" type="button" aria-controls="gnb" aria-expanded="false" aria-label="메뉴 열기"><span></span><span></span><span></span></button>
+  </div>
+</header>"""
 
-def svg_sheet():
-    g = f'font-family="{FT}" font-size="15" fill="{INK}"'
-    rows = "".join(f'<text x="110" y="{130+i*50}" {g}>{t}</text><line x1="170" y1="{134+i*50}" x2="530" y2="{134+i*50}" stroke="{INK}" stroke-width="1.5"/>'
-                   for i, t in enumerate(["학생", "학년", "과목", "지역", "요일", "방식"]))
-    hand = "".join(f'<text x="184" y="{176+i*50}" font-family="{FS}" font-size="17" fill="{MUTED}" font-style="italic">{t}</text>'
-                   for i, t in enumerate(["중 2", "수학, 영어", "분당 · 화상 가능", "화 · 목 저녁"]))
-    return (f'<svg viewBox="0 0 640 480" role="img" aria-label="상담지: 학생, 학년, 과목, 지역, 요일, 방식을 적는 종이">'
-            f'<rect width="640" height="480" fill="{SURF}"/><rect x="80" y="30" width="480" height="420" fill="{PAPER}"/>'
-            f'<text x="110" y="80" font-family="{FS}" font-size="26" font-weight="600" fill="{INK}">과외 상담지</text>'
-            f'<text x="420" y="80" font-family="{FT}" font-size="14" fill="{MUTED}">No. 0001</text>{rows}{hand}'
-            f'<g class="pen"><path d="M150 405 l120 -18 l10 6 l-120 18 z" fill="{INK}"/><path d="M270 387 l10 6 l12 -4 l-14 -8 z" fill="{MUTED}"/></g>'
-            f'<rect x="430" y="410" width="110" height="26" fill="{INK}"/><text x="485" y="428" text-anchor="middle" font-family="{FT}" font-size="13" fill="{PAPER}">체험 1회 무료</text></svg>')
+def footer(rel=""):
+    home = rel or "./"
+    grades = "".join(f'<li><a href="{rel}{gk}/">{g["name"]} 과외</a></li>' for gk, g in D.GRADES.items())
+    subj = "".join(f'<li><a href="{rel}middle-{sk}/">{s["name"]} 과외</a></li>' for sk, s in D.SUBJECTS.items())
+    return f"""<footer class="site-foot">
+  <div class="container site-foot__in">
+    <div class="site-foot__brand">
+      <a class="logo logo--light" href="{home}">{LOGO_MARK}<span>{D.SITE_NAME}</span></a>
+      <p>아이와 꼭 맞는 선생님을 잇는 곳.<br>초중고 방문·화상 1:1 과외 상담</p>
+      <p class="site-foot__tel"><a href="tel:{D.PHONE_RAW}">{D.PHONE}</a><br><small>평일 09–21시 · 주말 10–18시 · 문자 언제든</small></p>
+    </div>
+    <div class="site-foot__cols">
+      <div><h4>학년별</h4><ul>{grades}</ul></div>
+      <div><h4>과목별</h4><ul>{subj}</ul></div>
+      <div><h4>안내</h4><ul><li><a href="{rel}online/">화상과외</a></li><li><a href="{rel}visit/">방문과외</a></li><li><a href="{rel}cost/">과외 비용</a></li><li><a href="{rel}blog/">블로그</a></li></ul></div>
+    </div>
+  </div>
+  <div class="container site-foot__bottom">© 2026 {D.SITE_NAME} · <a href="{rel}sitemap.xml">사이트맵</a> · <a href="{rel}rss.xml">RSS</a></div>
+</footer>
+<div class="quickbar">
+  <a href="tel:{D.PHONE_RAW}">📞 전화 상담</a>
+  <a class="quickbar__main" href="sms:{D.PHONE_RAW}">💬 문자로 무료 체험 신청</a>
+</div>
+<script src="{rel}js/base.js" defer></script>
+<script src="{rel}js/site.js" defer></script>"""
 
-def svg_timetable():
-    days = "".join(f'<text x="{300+i*200}" y="72" text-anchor="middle" font-family="{FT}" font-size="30" fill="{MUTED}">{d}</text>' for i, d in enumerate("월화수목금토일"))
-    hours = "".join(f'<text x="100" y="{185+i*130}" text-anchor="middle" font-family="{FT}" font-size="26" fill="{MUTED}">{h}시</text>' for i, h in enumerate(range(16, 22)))
-    grid = "".join(f'<line x1="{200+i*200}" y1="0" x2="{200+i*200}" y2="900"/>' for i in range(7)) + "".join(f'<line x1="0" y1="{110+i*130}" x2="1600" y2="{110+i*130}"/>' for i in range(6))
-    def slot(x, y, t, u, fill, ink, delay=""):
-        st = f' style="animation-delay:{delay}"' if delay else ""
-        return (f'<g class="slot"{st}><rect x="{x}" y="{y}" width="176" height="236" fill="{fill}"/>'
-                f'<text x="{x+88}" y="{y+108}" text-anchor="middle" font-family="{FS}" font-size="30" fill="{ink}">{t}</text>'
-                f'<text x="{x+88}" y="{y+148}" text-anchor="middle" font-family="{FT}" font-size="22" fill="{ink}">{u}</text></g>')
-    return (f'<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><rect width="1600" height="900" fill="{SURF}"/>'
-            f'<g stroke="{SURF3}" stroke-width="2">{grid}</g>{days}{hours}'
-            + slot(412, 382, "수학", "화상 · 90분", INK, PAPER) + slot(812, 382, "수학", "화상 · 90분", INK, PAPER, "1.4s")
-            + slot(1212, 122, "영어", "방문 · 2시간", PAPER, INK, "0.7s") + "</svg>")
+SUBJECT_ICON = {"math": "➗", "english": "🔤", "korean": "📖", "science": "🔬", "social": "🌏"}
+GRADE_ICON = {"elementary": "🌱", "middle": "📘", "high": "🎓"}
 
-pages = []   # (path, lastmod, priority)
-
-# ---------------------------------------------------------------- 과목 미리보기 그림
-def subject_svg(key):
-    F = FS
-    base = f'<svg viewBox="0 0 640 480"><rect width="640" height="480" fill="{SURF}"/><rect x="60" y="40" width="520" height="400" fill="{PAPER}"/>'
-    if key == "math":
-        body = (f'<path d="M120 360 Q 320 60 520 360" fill="none" stroke="#2f737d" stroke-width="6"/>'
-                f'<line x1="100" y1="380" x2="540" y2="380" stroke="#06525c" stroke-width="2"/><line x1="320" y1="90" x2="320" y2="400" stroke="#06525c" stroke-width="2"/>'
-                f'<text x="110" y="100" font-family="{F}" font-size="22" fill="#06525c">y = -(x-3)² + 9</text><circle cx="320" cy="135" r="8" fill="#06525c"/>'
-                f'<text x="340" y="130" font-family="{F}" font-size="18" fill="#2f737d">꼭짓점</text>')
-    elif key == "english":
-        lines = ["The teacher asked the students to read", "the passage carefully before answering.", "Because the question was difficult,", "many of them read it twice."]
-        body = "".join(f'<text x="110" y="{130+i*58}" font-family="{F}" font-size="24" fill="#06525c">{t}</text>' for i, t in enumerate(lines))
-        body += '<rect x="110" y="190" width="150" height="4" fill="#2f737d"/><rect x="110" y="306" width="100" height="4" fill="#2f737d"/><text x="420" y="330" font-family="'+F+'" font-size="18" fill="#2f737d">접속사 → 이유</text>'
-    elif key == "korean":
-        lines = ["글쓴이는 도시의 밤을 ‘잠들지 않는 바다’에", "빗대어 말한다. 끊임없이 움직이는 불빛을", "파도로, 사람들을 물고기로 본 것이다.", "", "문제. 윗글의 표현 방식으로 알맞은 것은?"]
-        body = "".join(f'<text x="110" y="{130+i*52}" font-family="{F}" font-size="22" fill="#06525c">{t}</text>' for i, t in enumerate(lines))
-        body += '<rect x="110" y="138" width="230" height="5" fill="#2f737d"/><text x="120" y="420" font-family="'+F+'" font-size="20" fill="#2f737d">③ 비유</text>'
-    elif key == "science":
-        body = (f'<rect x="150" y="150" width="120" height="200" fill="none" stroke="#06525c" stroke-width="3"/><rect x="150" y="250" width="120" height="100" fill="#2f737d"/>'
-                f'<rect x="370" y="150" width="120" height="200" fill="none" stroke="#06525c" stroke-width="3"/><rect x="370" y="200" width="120" height="150" fill="#2f737d"/>'
-                f'<text x="210" y="390" text-anchor="middle" font-family="{F}" font-size="18" fill="#06525c">가열 전</text><text x="430" y="390" text-anchor="middle" font-family="{F}" font-size="18" fill="#06525c">가열 후</text>'
-                f'<text x="110" y="100" font-family="{F}" font-size="22" fill="#06525c">실험 3. 온도와 부피</text>')
-    elif key == "social":
-        body = (f'<line x1="100" y1="240" x2="540" y2="240" stroke="#06525c" stroke-width="3"/>'
-                + "".join(f'<circle cx="{140+i*100}" cy="240" r="9" fill="{"#2f737d" if i==2 else "#06525c"}"/><text x="{140+i*100}" y="{210 if i%2==0 else 285}" text-anchor="middle" font-family="{F}" font-size="18" fill="#06525c">{y}</text>' for i, y in enumerate(["1392", "1592", "1636", "1876", "1910"]))
-                + f'<text x="110" y="100" font-family="{F}" font-size="22" fill="#06525c">조선 시대 연표</text><text x="340" y="400" text-anchor="middle" font-family="{F}" font-size="18" fill="#2f737d">병자호란</text>')
-    else:  # international
-        body = (f'<text x="110" y="100" font-family="{F}" font-size="22" fill="#06525c">IB Mathematics AA · Unit 4</text>'
-                + "".join(f'<rect x="110" y="{140+i*48}" width="{w}" height="22" fill="{"#2f737d" if i==1 else "#dde6e3"}"/>' for i, w in enumerate([380, 300, 420, 260, 340]))
-                + f'<text x="110" y="420" font-family="{F}" font-size="18" fill="#2f737d">Internal assessment due: Week 6</text>')
-    return base + body + "</svg>"
-
-# ---------------------------------------------------------------- 메인 페이지
-def build_index():
-    bars, previews = [], []
-    order = list(D.SUBJECTS.items())
-    for i, (key, s) in enumerate(order):
-        items = [(f'{g["name"]} {s["name"]} 과외', f'{gk}-{key}/', g["range"]) for gk, g in D.GRADES.items()]
-        li = "".join(f'<li><a href="{h}">{esc(t)}</a><span>{esc(r)}</span></li>' for t, h, r in items)
-        bars.append(f'''<details class="bar" data-preview="{key}" data-reveal style="--i:{i}"{" open" if i == 0 else ""}>
-  <summary>{esc(s["name"])}<span class="plus" aria-hidden="true">+</span></summary>
-  <div class="bar__panel"><div class="bar__thumb">{pic(f"img/subject-{key}.jpg", 1200, 900, s["name"] + " 수업 자료", subject_svg(key))}</div><ul>{li}</ul><p class="bar__desc">{esc(s["desc"])}</p></div>
-</details>''')
-        previews.append(f'<div class="preview__slide" data-id="{key}">{pic(f"img/subject-{key}.jpg", 1200, 900, "", subject_svg(key))}</div>')
-    groups = []
+def build_index(posts):
+    import json
+    grade_cards = []
     for i, (gk, g) in enumerate(D.GRADES.items()):
-        items = "".join(f'<div class="menu__item"><div><span class="menu__name">{esc(n)}</span><small>월 4회 기준 · 과목 1개</small></div><span class="menu__price">{esc(p)}</span></div>' for n, p in g["price"])
-        groups.append(f'<div class="menu__group" data-reveal style="--i:{i}"><h3>{g["name"]} <span class="muted">{g["range"]}</span></h3>{items}</div>')
+        li = "".join(f'<a href="{gk}-{sk}/">{esc(s["name"])}</a>' for sk, s in D.SUBJECTS.items())
+        grade_cards.append(f'''<article class="grade" data-reveal style="--i:{i}">
+  <a class="grade__head" href="{gk}/"><span class="grade__ic">{GRADE_ICON[gk]}</span><span><b>{g["name"]} 과외</b><small>{g["range"]}</small></span><span class="grade__go">→</span></a>
+  <p>{esc(g["intro"])}</p>
+  <div class="chips">{li}</div>
+</article>''')
+    subject_cards = []
+    for i, (sk, s) in enumerate(D.SUBJECTS.items()):
+        subject_cards.append(f'''<a class="subj" href="middle-{sk}/" data-reveal style="--i:{i}">
+  <div class="subj__img"><img src="img/subject-{sk}.jpg" width="1200" height="900" alt="{esc(s["name"])} 수업 자료" loading="lazy"></div>
+  <div class="subj__body"><b>{SUBJECT_ICON[sk]} {esc(s["name"])}</b><p>{esc(s["desc"])}</p></div>
+</a>''')
+    rows = []
+    for gk, g in D.GRADES.items():
+        if gk == "high":
+            rows.append(f'<tr><th>고1·2</th><td>{g["price"][0][1]}</td><td>{g["price"][1][1]}</td></tr>')
+            rows.append(f'<tr><th>고3</th><td>{g["price"][2][1]}</td><td>{g["price"][3][1]}</td></tr>')
+        else:
+            rows.append(f'<tr><th>{g["name"]}</th><td>{g["price"][0][1]}</td><td>{g["price"][1][1]}</td></tr>')
+    table = '<table><thead><tr><th>학년</th><th>주 1회</th><th>주 2회</th></tr></thead><tbody>' + "".join(rows) + '</tbody></table>'
+    latest = "".join(f'''<a class="post-card" href="blog/{p["slug"]}/"><time datetime="{p["date"].isoformat()}">{p["date"].strftime("%Y.%m.%d")}</time><b>{esc(p["title"])}</b><p>{esc(p["desc"][:80])}</p><span class="more">읽어 보기 →</span></a>''' for p in posts[:3]) or '<p class="muted">첫 글을 준비하고 있습니다.</p>'
     page = read("templates/index.html")
-    page = (page.replace("{{SITE_URL}}", D.SITE_URL).replace("{{SITE_NAME}}", D.SITE_NAME).replace("{{NAVER_VERIFY}}", D.NAVER_VERIFY).replace("{{FONTS}}", FONTS)
-                .replace("{{SVG_HERO}}", svg_hero()).replace("{{SVG_SHEET}}", svg_sheet()).replace("{{SVG_TIMETABLE}}", svg_timetable())
-                .replace("{{SUBJECT_BARS}}", "\n".join(bars)).replace("{{SUBJECT_PREVIEWS}}", "\n".join(previews))
-                .replace("{{PRICE_GROUPS}}", "\n".join(groups)).replace("{{FAQ}}", faq_html(D.FAQ)))
+    page = (page.replace("{{HEADER}}", header("")).replace("{{FOOTER}}", footer(""))
+                .replace("{{SITE_URL}}", D.SITE_URL).replace("{{SITE_NAME}}", D.SITE_NAME).replace("{{NAVER_VERIFY}}", D.NAVER_VERIFY)
+                .replace("{{FONTS}}", FONTS).replace("{{FAVICON}}", FAVICON)
+                .replace("{{GRADE_CARDS}}", "\n".join(grade_cards)).replace("{{SUBJECT_CARDS}}", "\n".join(subject_cards))
+                .replace("{{PRICE_TABLE}}", table).replace("{{LATEST_POSTS}}", latest)
+                .replace("{{FAQ}}", faq_html(D.FAQ)).replace("{{FAQ_LD}}", json.dumps(faq_ld(D.FAQ), ensure_ascii=False)))
     write("index.html", page)
     pages.append(("", TODAY, "1.0"))
+
+pages = []   # (path, lastmod, priority)
 
 # ---------------------------------------------------------------- 키워드 페이지 (학년×과목, 학년 허브, 기타)
 def build_keyword_pages():
@@ -240,7 +211,7 @@ def build_keyword_pages():
 <h2>진행 순서</h2>
 <p>오늘 전화나 문자로 학년, 과목, 지역, 원하는 요일을 알려주시면 2~3일 안에 선생님 후보 1~2명을 안내합니다. 그 주에 무료 체험 수업을 하고, 계속할지는 가족이 정합니다. 첫 수업까지 보통 일주일입니다.</p>
 <h2>자주 묻는 질문</h2>
-<div class="faq__text">{faq_html(faq)}</div>
+<div class="faq">{faq_html(faq)}</div>
 </article>
 {aside(1, [(f'{g["name"]} {o["name"]} 과외', f"{gk}-{ok}/") for ok, o in D.SUBJECTS.items() if ok != sk] + [(f'{o["name"]} {s["name"]} 과외', f"{ok}-{sk}/") for ok, o in D.GRADES.items() if ok != gk] + [("화상과외", "online/"), ("방문과외", "visit/"), ("과외 비용", "cost/")])}
 </div></section>"""
@@ -264,7 +235,7 @@ def build_keyword_pages():
 <h2>{esc(g["name"])} 과외 비용</h2>
 <p>월 기준 안내 범위: {esc(", ".join(f"{n} {p}" for n, p in g["price"]))}. 정확한 금액은 상담에서 확정하며 상담과 체험은 무료입니다. 자세한 설명은 <a href="../cost/">과외 비용</a> 페이지에 있습니다.</p>
 <h2>자주 묻는 질문</h2>
-<div class="faq__text">{faq_html(D.FAQ[:6])}</div>
+<div class="faq">{faq_html(D.FAQ[:6])}</div>
 </article>
 {aside(1, [(f'{o["name"]} 과외', f"{ok}/") for ok, o in D.GRADES.items() if ok != gk] + [("화상과외", "online/"), ("방문과외", "visit/")])}
 </div></section>"""
@@ -285,7 +256,7 @@ def build_keyword_pages():
 <h2>진행 순서</h2>
 <p>전화나 문자로 학년, 과목, 지역, 원하는 요일을 알려주시면 2~3일 안에 선생님 후보를 안내하고, 그 주에 무료 체험 수업을 합니다. 체험 뒤에 계속할지는 가족이 정합니다.</p>
 <h2>자주 묻는 질문</h2>
-<div class="faq__text">{faq_html(p["faq"])}</div>
+<div class="faq">{faq_html(p["faq"])}</div>
 </article>
 {aside(1, [(f'{o["name"]} 과외', f"{ok}/") for ok, o in D.GRADES.items()] + [(q["title"], f"{qk}/") for qk, q in D.EXTRA_PAGES.items() if qk != key])}
 </div></section>"""
@@ -386,9 +357,9 @@ def build_feeds(posts):
     write("robots.txt", f"User-agent: *\nAllow: /\nUser-agent: Yeti\nAllow: /\n\nSitemap: {D.SITE_URL}/sitemap.xml\n")
 
 if __name__ == "__main__":
-    build_index()
-    build_keyword_pages()
     posts = load_posts()
+    build_index(posts)
+    build_keyword_pages()
     build_blog(posts)
     build_feeds(posts)
     print(f"완료: 페이지 {len(pages)}개 (블로그 글 {len(posts)}개) → {OUT}")

@@ -16,10 +16,10 @@
 <meta property="og:url" content="{{SITE_URL}}/">
 <meta property="og:image" content="{{SITE_URL}}/img/og.png">
 <meta property="og:locale" content="ko_KR">
+<meta name="theme-color" content="#0e8f86">
 <link rel="alternate" type="application/rss+xml" title="{{SITE_NAME}} 블로그" href="{{SITE_URL}}/rss.xml">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2306525c'/%3E%3Crect x='7' y='6' width='18' height='22' fill='%23fff'/%3E%3Crect x='10' y='11' width='12' height='2' fill='%2306525c'/%3E%3Crect x='10' y='16' width='12' height='2' fill='%2306525c'/%3E%3Crect x='10' y='21' width='8' height='2' fill='%2306525c'/%3E%3C/svg%3E">
+{{FAVICON}}
 {{FONTS}}
-<link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/site.css">
 <script>document.documentElement.classList.add('js')</script>
 <script type="application/ld+json">
@@ -39,239 +39,211 @@
   ]
 }
 </script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {"@type": "Question", "name": "상담과 체험 수업에 비용이 드나요?", "acceptedAnswer": {"@type": "Answer", "text": "상담과 첫 체험 수업 1회는 무료입니다. 체험 후 계속할지 가족이 결정합니다."}},
-    {"@type": "Question", "name": "방문과외와 화상과외 중 무엇이 좋나요?", "acceptedAnswer": {"@type": "Answer", "text": "집중이 어려운 초등 저학년은 방문, 일정이 빡빡한 중고등은 화상이 잘 맞는 편입니다. 상담에서 아이 성향과 가정 환경을 듣고 함께 정합니다."}},
-    {"@type": "Question", "name": "선생님은 어떻게 정해지나요?", "acceptedAnswer": {"@type": "Answer", "text": "학년, 과목, 지역, 희망 요일과 아이 성향을 듣고 맞는 선생님 후보 1~2명을 2~3일 안에 안내합니다."}},
-    {"@type": "Question", "name": "첫 수업까지 얼마나 걸리나요?", "acceptedAnswer": {"@type": "Answer", "text": "상담에서 첫 체험 수업까지 보통 일주일 안에 진행됩니다."}}
-  ]
-}
-</script>
+<script type="application/ld+json">{{FAQ_LD}}</script>
 </head>
 <body>
 
-<header class="top">
-  <a class="top__mark" href="./">{{SITE_NAME}}</a>
-  <nav>
-    <a class="top__link" href="blog/">블로그</a>
-    <span aria-hidden="true"> · </span>
-    <a class="top__link tel" href="tel:01031315305">010-3131-5305</a>
-  </nav>
-</header>
+{{HEADER}}
 
 <main>
 
-<!-- 1. HERO: the intake folder, as a stack of tabbed folders on pale paper -->
+<!-- 1. HERO -->
 <section class="hero" aria-labelledby="h1">
-  <div class="hero__head">
-    <h1 id="h1" class="hero__title">과외, 상담부터.</h1>
-    <p class="hero__sub">초등부터 고3까지, 방문·화상 1:1 과외를 학년과 과목에 맞춰 상담하고 선생님을 연결해 드립니다. 첫 수업은 무료 체험. <a class="tel" href="tel:01031315305">010-3131-5305</a></p>
+  <div class="container hero__grid">
+    <div class="hero__text">
+      <span class="badge">상담 · 체험 수업 무료</span>
+      <h1 id="h1">우리 아이에게 꼭 맞는 선생님,<br><b>{{SITE_NAME}}</b>가 이어드립니다</h1>
+      <p class="hero__sub">초등부터 고3까지 국어·영어·수학·과학·사회. 학년, 과목, 지역, 원하는 요일만 알려주시면 2~3일 안에 선생님을 안내하고 첫 수업은 무료로 체험합니다.</p>
+      <div class="cta">
+        <a class="btn btn--yellow btn--lg" href="#contact">무료 체험 신청하기</a>
+        <a class="btn btn--line btn--lg" href="tel:01031315305">전화 상담 010-3131-5305</a>
+      </div>
+      <ul class="hero__checks">
+        <li>방문과외 · 화상과외 선택</li>
+        <li>체험 후 계속할지 가족이 결정</li>
+        <li>선생님 변경 언제든 가능</li>
+      </ul>
+    </div>
+    <div class="hero__visual">
+      <div class="hero__photo">
+        <img src="img/hero.jpg" width="1500" height="1000" alt="밝은 책상에서 선생님이 학생의 수학 문제집을 펜으로 짚어 주는 1:1 수업 장면" fetchpriority="high">
+      </div>
+      <div class="float float--1"><span class="float__ic">⏱</span><div><b>2~3일 안</b><small>선생님 후보 안내</small></div></div>
+      <div class="float float--2"><span class="float__ic float__ic--y">✓</span><div><b>첫 수업 무료</b><small>체험 후 결정</small></div></div>
+    </div>
   </div>
-  <nav class="folders" aria-label="학년별 과외">
-    <a class="folder" style="--i:0; --c:#bfd3ce; --x:4%" href="elementary/"><span class="folder__tab">초등 과외</span></a>
-    <a class="folder" style="--i:1; --c:#cbdcd8; --x:22%" href="middle/"><span class="folder__tab">중등 과외</span></a>
-    <a class="folder" style="--i:2; --c:#d8e5e1; --x:42%" href="high/"><span class="folder__tab">고등 과외</span></a>
-    <a class="folder" style="--i:3; --c:#e3ece9; --x:61%" href="online/"><span class="folder__tab">화상 과외</span></a>
-    <div class="folder folder--front" style="--i:4; --c:#ffffff; --x:79%">
-      <a class="folder__tab" href="visit/">방문 과외</a>
-      <div class="folder__left">
-      <div class="folder__open">
-        <a class="button" href="#contact">무료 상담 신청</a>
-        <p class="folder__note">학년, 과목, 지역, 원하는 요일만 알려주세요. 전화 <a class="tel" href="tel:01031315305">010-3131-5305</a> 또는 아래 문자 신청.</p>
-      </div>
-      <div class="folder__steps" aria-label="진행 순서">
-        <div><span>오늘 전화 또는 문자 상담</span><i></i><span>10분</span></div>
-        <div><span>2~3일 안에 선생님 후보 안내</span><i></i><span>1~2명</span></div>
-        <div><span>첫 주에 무료 체험 수업</span><i></i><span>1회</span></div>
-      </div>
-      </div>
-      <figure class="folder__plate">
-        <div class="pic">
-          <img src="img/hero.jpg" width="1500" height="1000" alt="밝은 책상에서 선생님이 학생의 수학 문제집을 펜으로 짚어 주는 1:1 수업 장면" fetchpriority="high" onerror="this.parentNode.classList.add('is-missing')">
-          <div class="pic__draw">{{SVG_HERO}}</div>
+</section>
+
+<!-- 2. STAT CARDS -->
+<section class="container stats" aria-label="수업 안내 요약">
+  <div class="stat" data-reveal style="--i:0"><span class="stat__ic">🎒</span><b>초1 ~ 고3</b><span>전 학년 1:1 수업</span></div>
+  <div class="stat" data-reveal style="--i:1"><span class="stat__ic">📚</span><b>5과목</b><span>국어·영어·수학·과학·사회</span></div>
+  <div class="stat" data-reveal style="--i:2"><span class="stat__ic">🏠</span><b>방문 · 화상</b><span>집으로, 또는 화면으로</span></div>
+  <div class="stat" data-reveal style="--i:3"><span class="stat__ic">🎁</span><b>체험 1회 무료</b><span>상담 비용도 없습니다</span></div>
+</section>
+
+<!-- 3. WHY -->
+<section class="sec" aria-labelledby="h-why">
+  <div class="container">
+    <p class="eyebrow">WHY {{SITE_NAME}}</p>
+    <h2 id="h-why" class="h2">학원으로는 채워지지 않던 부분,<br><em>1:1</em>로 채웁니다</h2>
+    <div class="why">
+      <article class="why__card" data-reveal style="--i:0">
+        <span class="why__num">01</span>
+        <h3>막힌 곳부터 찾는 수업</h3>
+        <p>무작정 진도부터 나가지 않습니다. 지금 학년 문제가 안 풀리는 이유가 어느 단원에 있는지 먼저 확인하고, 그 부분을 메운 뒤 학교 진도를 따라갑니다.</p>
+      </article>
+      <article class="why__card" data-reveal style="--i:1">
+        <span class="why__num">02</span>
+        <h3>학교 시험에 맞춘 진도</h3>
+        <p>학교 교과서와 시험 범위, 출제 유형에 맞춰 수업합니다. 틀린 문제는 다음 수업에서 다시 풀어 확실히 넘어갔는지 확인합니다.</p>
+      </article>
+      <article class="why__card" data-reveal style="--i:2">
+        <span class="why__num">03</span>
+        <h3>방문 · 화상 자유 선택</h3>
+        <p>집중이 필요한 초등 저학년은 방문으로, 일정이 빡빡한 중고등은 화상으로. 주 1회 방문 + 주 1회 화상처럼 섞어서 수업할 수도 있습니다.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- 4. GRADE × SUBJECT -->
+<section class="sec sec--tint" id="subjects" aria-labelledby="h-subjects">
+  <div class="container">
+    <p class="eyebrow">CLASSES</p>
+    <h2 id="h-subjects" class="h2">학년과 과목을 골라 보세요</h2>
+    <p class="sec__lead">각 과외 안내 페이지에서 수업 방식과 비용을 자세히 볼 수 있습니다. 두 과목 이상도 한 번에 상담합니다.</p>
+    <div class="grades">
+      {{GRADE_CARDS}}
+    </div>
+    <div class="subjects">
+      {{SUBJECT_CARDS}}
+    </div>
+  </div>
+</section>
+
+<!-- 5. PRICES -->
+<section class="sec" id="prices" aria-labelledby="h-prices">
+  <div class="container container--narrow">
+    <p class="eyebrow">TUITION</p>
+    <h2 id="h-prices" class="h2">과외 비용, 얼마나 들까요?</h2>
+    <p class="sec__lead">월 4주 · 과목 1개 기준 안내 범위입니다. 정확한 금액은 무료 상담에서 학생 조건을 듣고 확정합니다.</p>
+    <div class="price" data-reveal>
+      {{PRICE_TABLE}}
+    </div>
+    <p class="price__note">※ 과목 수, 수업 시간, 선생님 경력에 따라 달라질 수 있습니다. 가입비·교재비는 별도로 안내합니다. <a href="cost/">과외 비용 자세히 보기 →</a></p>
+  </div>
+</section>
+
+<!-- 6. HOW -->
+<section class="sec sec--tint" id="how" aria-labelledby="h-how">
+  <div class="container">
+    <p class="eyebrow">HOW IT WORKS</p>
+    <h2 id="h-how" class="h2">첫 수업까지, 보통 <em>일주일</em></h2>
+    <ol class="steps">
+      <li class="step" data-reveal style="--i:0"><span class="step__no">STEP 1</span><h3>무료 상담</h3><p>전화나 문자로 학년·과목·지역·희망 요일과 아이 성향을 알려주세요. 10분이면 충분합니다.</p></li>
+      <li class="step" data-reveal style="--i:1"><span class="step__no">STEP 2</span><h3>선생님 안내</h3><p>조건에 맞는 선생님 후보 1~2명을 2~3일 안에 안내하고 체험 일정을 잡습니다.</p></li>
+      <li class="step" data-reveal style="--i:2"><span class="step__no">STEP 3</span><h3>무료 체험 후 결정</h3><p>첫 체험 수업을 받아 보고, 계속할지는 가족이 정합니다. 안 맞으면 다른 선생님으로 바꿉니다.</p></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 7. MODES -->
+<section class="sec" aria-labelledby="h-modes">
+  <div class="container">
+    <p class="eyebrow">ONLINE · VISIT</p>
+    <h2 id="h-modes" class="h2">수업 방식은 아이에게 맞춰서</h2>
+    <div class="modes">
+      <a class="mode" href="visit/" data-reveal style="--i:0">
+        <div class="mode__img"><img src="img/sheet.jpg" width="1200" height="900" alt="책상 위에서 손으로 상담지를 작성하는 모습" loading="lazy"></div>
+        <div class="mode__body">
+          <span class="tag">방문과외</span>
+          <h3>선생님이 집으로 찾아갑니다</h3>
+          <p>옆에서 바로 확인하는 수업. 집중이 어려운 초등 저학년, 손으로 풀며 배워야 하는 수학에 잘 맞습니다.</p>
+          <span class="more">방문과외 안내 →</span>
         </div>
-        <figcaption>1:1 수업은 선생님이 아이 옆에서, 또는 화면 너머에서 문제 하나하나를 함께 봅니다.</figcaption>
-      </figure>
-    </div>
-  </nav>
-</section>
-
-<!-- 2. INTRO: title, note, facts row -->
-<section class="intro wrap" aria-labelledby="h-intro">
-  <div class="intro__row">
-    <h2 id="h-intro" class="intro__title" data-reveal>한 통이면 됩니다</h2>
-    <p class="intro__note" data-reveal>학년, 과목, 지역, 원하는 요일만 알려주세요. 맞는 선생님을 찾아 무료 체험 수업까지 잡아 드립니다. 상담과 체험에 비용은 없습니다.</p>
-  </div>
-  <div class="facts">
-    <div class="facts__list">
-      <dl class="fact" data-reveal style="--i:0"><dt>방문·화상</dt><dd>집으로 오거나, 화면으로 만나거나</dd></dl>
-      <dl class="fact" data-reveal style="--i:1"><dt>초1~고3</dt><dd>학년과 과목에 맞는 선생님</dd></dl>
-      <dl class="fact" data-reveal style="--i:2"><dt>5과목</dt><dd>국어·영어·수학·과학·사회</dd></dl>
-      <dl class="fact" data-reveal style="--i:3"><dt>1회 무료</dt><dd>체험 수업 후 계속할지 결정</dd></dl>
-    </div>
-    <figure class="intro__figure" data-reveal>
-      <div class="pic">
-        <img src="img/sheet.jpg" width="1200" height="900" alt="책상 위 과외 상담지에 볼펜으로 학년과 과목을 적는 손" loading="lazy" onerror="this.parentNode.classList.add('is-missing')">
-        <div class="pic__draw">{{SVG_SHEET}}</div>
-      </div>
-      <figcaption>상담 때 적는 상담지. 학년, 과목, 지역, 요일. 이 몇 줄이면 선생님을 찾을 수 있습니다.</figcaption>
-    </figure>
-  </div>
-</section>
-
-<!-- 3. HOW IT WORKS: itinerary on a slip -->
-<section class="how wrap" id="how" aria-labelledby="h-how">
-  <div class="how__grid">
-    <div class="how__text">
-      <h2 id="h-how" class="how__title" data-reveal>첫 수업까지, 일주일</h2>
-      <p data-reveal>오늘 전화하면 2~3일 안에 선생님 후보를 안내하고, 그 주에 무료 체험 수업을 합니다. 체험 뒤에 계속할지는 가족이 정합니다. 궁금한 점은 <a href="#faq">자주 묻는 질문</a>에 적어 두었습니다.</p>
-    </div>
-    <div class="slip" data-reveal>
-      <div class="slip__head"><span>진행 순서</span><span>소요</span></div>
-      <div class="slip__group">오늘</div>
-      <div class="slip__row"><span>전화 또는 문자로 상담</span><i></i><span>10분</span></div>
-      <div class="slip__row"><span>학년·과목·지역·요일 확인</span><i></i><span>같이</span></div>
-      <div class="slip__group">2~3일 안</div>
-      <div class="slip__row"><span>선생님 후보 안내</span><i></i><span>1~2명</span></div>
-      <div class="slip__row"><span>체험 수업 일정 조율</span><i></i><span>전화</span></div>
-      <div class="slip__group">첫 주</div>
-      <div class="slip__row"><span>무료 체험 수업</span><i></i><span>1회</span></div>
-      <div class="slip__row"><span>계속할지 결정</span><i></i><span>가족</span></div>
-      <div class="slip__total"><span>첫 수업까지</span><span>보통 7일</span></div>
+      </a>
+      <a class="mode" href="online/" data-reveal style="--i:1">
+        <div class="mode__img"><img src="img/desk-wide.jpg" width="1376" height="774" alt="노트북으로 화상 수업을 듣는 학생 책상" loading="lazy"></div>
+        <div class="mode__body">
+          <span class="tag tag--sky">화상과외</span>
+          <h3>전국 어디서나, 해외에서도</h3>
+          <p>이동 시간 없이 평일 저녁에도 수업. 선생님 선택 폭이 넓고, 수업 화면과 필기가 남아 복습하기 좋습니다.</p>
+          <span class="more">화상과외 안내 →</span>
+        </div>
+      </a>
     </div>
   </div>
 </section>
 
-<!-- 4. SUBJECTS: giant word, filled bars, index with preview -->
-<section class="subjects wrap" id="subjects" aria-labelledby="h-subjects">
-  <div class="subjects__inner">
-    <div class="subjects__col">
-      <h2 id="h-subjects" class="giant" data-reveal>과목</h2>
-      <p data-reveal>과목과 학년을 고르면 해당 과외 안내 페이지로 갑니다. 두 과목 이상도 한 번에 상담합니다.</p>
-      <div class="bars">
-        {{SUBJECT_BARS}}
-      </div>
+<!-- 8. BLOG -->
+<section class="sec sec--tint" aria-labelledby="h-blog">
+  <div class="container">
+    <p class="eyebrow">BLOG</p>
+    <h2 id="h-blog" class="h2">과외 고민, 먼저 읽어 보세요</h2>
+    <div class="posts">
+      {{LATEST_POSTS}}
     </div>
-    <div class="preview" aria-hidden="true">
-      {{SUBJECT_PREVIEWS}}
-    </div>
+    <p class="center"><a class="btn btn--line" href="blog/">블로그 전체 보기</a></p>
   </div>
 </section>
 
-<!-- 5. PRICES: like a menu -->
-<section class="prices wrap" id="prices" aria-labelledby="h-prices">
-  <div class="prices__grid">
-    <div class="prices__head">
-      <h2 id="h-prices" class="prices__title" data-reveal>수업료 안내</h2>
-      <p class="prices__note" data-reveal>월 기준 안내 범위입니다. 과목, 횟수, 선생님에 따라 달라지며 정확한 금액은 상담에서 확정합니다. 상담과 체험 수업은 무료입니다.</p>
-      <figure class="prices__figure" data-reveal>
-        <svg viewBox="0 0 300 375" role="img" aria-label="월 수업료 영수증 그림">
-          <rect width="300" height="375" fill="#fff"/>
-          <text x="24" y="44" font-family="Noto Serif KR, Noto Serif CJK KR, serif" font-size="18" font-weight="600" fill="#06525c">수업료 계산</text>
-          <g font-family="Pretendard, Noto Sans KR, Noto Sans CJK KR, sans-serif" font-size="14" fill="#06525c">
-            <text x="24" y="90">주 1회 × 4주</text><text x="276" y="90" text-anchor="end">4회</text>
-            <text x="24" y="120">주 2회 × 4주</text><text x="276" y="120" text-anchor="end">8회</text>
-            <text x="24" y="150">체험 수업</text><text x="276" y="150" text-anchor="end" fill="#2f737d">0원</text>
-            <text x="24" y="180">상담</text><text x="276" y="180" text-anchor="end" fill="#2f737d">0원</text>
-          </g>
-          <line x1="24" y1="200" x2="276" y2="200" stroke="#06525c" stroke-width="4" stroke-dasharray="0 8" stroke-linecap="round"/>
-          <text x="24" y="240" font-family="Pretendard, Noto Sans KR, Noto Sans CJK KR, sans-serif" font-size="14" fill="#06525c">월 수업료</text>
-          <text x="276" y="240" text-anchor="end" font-family="Pretendard, Noto Sans KR, Noto Sans CJK KR, sans-serif" font-size="14" fill="#06525c">상담 시 확정</text>
-          <rect x="24" y="290" width="252" height="44" fill="#06525c"/>
-          <text x="150" y="318" text-anchor="middle" font-family="Pretendard, Noto Sans KR, Noto Sans CJK KR, sans-serif" font-size="14" fill="#fff">가입비·교재비 별도 안내</text>
-        </svg>
-      </figure>
-    </div>
-    <div class="menu">
-      {{PRICE_GROUPS}}
-    </div>
-  </div>
-</section>
-
-<!-- 6. FAQ: answers as reading text -->
-<section class="faq wrap" id="faq" aria-labelledby="h-faq">
-  <div class="faq__grid">
-    <h2 id="h-faq" class="faq__title" data-reveal>자주 묻는 질문</h2>
-    <div class="faq__text" data-reveal>
+<!-- 9. FAQ -->
+<section class="sec" id="faq" aria-labelledby="h-faq">
+  <div class="container container--narrow">
+    <p class="eyebrow">FAQ</p>
+    <h2 id="h-faq" class="h2">자주 묻는 질문</h2>
+    <div class="faq">
       {{FAQ}}
     </div>
   </div>
 </section>
 
-<!-- 7. CONTACT: card on a full-bleed photograph of the study desk -->
+<!-- 10. CONTACT -->
 <section class="contact" id="contact" aria-labelledby="h-contact">
-  <div class="contact__ground" aria-hidden="true">
-    <div class="pic">
-      <img src="img/desk-wide.jpg" width="1376" height="774" alt="" loading="lazy" onerror="this.parentNode.classList.add('is-missing')">
-      <div class="pic__draw">{{SVG_TIMETABLE}}</div>
+  <div class="container contact__grid">
+    <div class="contact__text">
+      <p class="eyebrow eyebrow--light">FREE CONSULTING</p>
+      <h2 id="h-contact">우리 아이에게 맞는 과외,<br>지금 무료로 체험해 보세요</h2>
+      <p>전국 어디서나 화상으로, 가능한 지역은 방문으로 수업합니다. 문자를 남기시면 늦어도 다음 날 안에 연락드립니다.</p>
+      <dl class="hours">
+        <div><dt>평일</dt><dd>09:00 – 21:00</dd></div>
+        <div><dt>주말</dt><dd>10:00 – 18:00</dd></div>
+        <div><dt>문자</dt><dd>언제든지</dd></div>
+      </dl>
+      <a class="contact__tel" href="tel:01031315305">📞 010-3131-5305</a>
     </div>
-  </div>
-  <div class="card">
-    <h2 id="h-contact" class="card__title">상담 신청</h2>
-    <p class="card__lines">전국 어디서나 화상으로, 가능한 지역은 방문으로 수업합니다. 전화가 편하면 바로 걸어 주세요.</p>
-    <div class="card__hours" aria-label="상담 가능 시간">
-      <div><span>평일</span><span>09:00 – 21:00</span></div>
-      <div><span>주말</span><span>10:00 – 18:00</span></div>
-      <div><span>문자</span><span>언제든지</span></div>
-    </div>
-    <p class="card__tel"><a href="tel:01031315305">010-3131-5305</a></p>
-    <form class="compose" id="compose" action="sms:01031315305" method="get">
-      <div class="compose__row">
-        <div><label for="c-grade">학년</label>
-          <select class="field" id="c-grade" name="grade">
-            <option>초등 1~3학년</option><option>초등 4~6학년</option><option>중학교 1학년</option><option selected>중학교 2학년</option><option>중학교 3학년</option><option>고등학교 1학년</option><option>고등학교 2학년</option><option>고등학교 3학년</option>
-          </select></div>
-        <div><label for="c-subject">과목</label>
-          <select class="field" id="c-subject" name="subject">
-            <option>수학</option><option>영어</option><option>국어</option><option>과학</option><option>사회</option><option>수학과 영어</option>
-          </select></div>
+    <div class="form-card">
+      <h3>30초 문자 상담 신청</h3>
+      <form class="compose" id="compose" action="sms:01031315305" method="get">
+        <div class="compose__row">
+          <label>학년
+            <select class="field" id="c-grade" name="grade">
+              <option>초등 1~3학년</option><option>초등 4~6학년</option><option>중학교 1학년</option><option selected>중학교 2학년</option><option>중학교 3학년</option><option>고등학교 1학년</option><option>고등학교 2학년</option><option>고등학교 3학년</option>
+            </select></label>
+          <label>과목
+            <select class="field" id="c-subject" name="subject">
+              <option>수학</option><option>영어</option><option>국어</option><option>과학</option><option>사회</option><option>수학과 영어</option>
+            </select></label>
+        </div>
+        <label>수업 방식
+          <select class="field" id="c-mode" name="mode">
+            <option>화상과외</option><option>방문과외</option><option>상담하며 결정</option>
+          </select></label>
+        <span class="compose__label">보낼 문자 미리보기</span>
+        <output id="c-out" for="c-grade c-subject c-mode">중학교 2학년 수학 화상과외 상담 신청합니다. 가능한 시간에 연락 부탁드립니다.</output>
+      </form>
+      <div class="form-card__actions">
+        <a class="btn btn--yellow btn--lg" id="sms-link" href="sms:01031315305?body=%EA%B3%BC%EC%99%B8%20%EC%83%81%EB%8B%B4%20%EC%8B%A0%EC%B2%AD%ED%95%A9%EB%8B%88%EB%8B%A4">문자로 신청하기</a>
+        <a class="btn btn--ghost btn--lg" href="tel:01031315305">전화하기</a>
       </div>
-      <div><label for="c-mode">방식</label>
-        <select class="field" id="c-mode" name="mode">
-          <option>화상과외</option><option>방문과외</option><option>상담하며 결정</option>
-        </select></div>
-      <label for="c-out">보낼 문자</label>
-      <output id="c-out" for="c-grade c-subject c-mode">중학교 2학년 수학 화상과외 상담 신청합니다. 가능한 시간에 연락 부탁드립니다.</output>
-    </form>
-    <div class="card__actions">
-      <a class="button" id="sms-link" href="sms:01031315305?body=%EA%B3%BC%EC%99%B8%20%EC%83%81%EB%8B%B4%20%EC%8B%A0%EC%B2%AD%ED%95%A9%EB%8B%88%EB%8B%A4">문자로 신청</a>
-      <a class="button button--soft" href="tel:01031315305">전화하기</a>
     </div>
   </div>
 </section>
 
 </main>
 
-<!-- 8. FOOTER: the back of the card -->
-<footer class="foot">
-  <div class="foot__panel">
-    <div>
-      <p class="foot__signoff">답은 하루 안에</p>
-      <p class="foot__msg">문자를 남기시면 늦어도 다음 날 안에 연락드립니다. 과외에 대해 미리 알아보고 싶으면 <a href="blog/">블로그</a>에 학년별·과목별 글을 매일 올리고 있습니다.</p>
-    </div>
-    <div class="foot__addr">
-      <div class="stamp" aria-hidden="true">
-        <div class="pic">
-          <img src="img/stamp.jpg" width="300" height="400" alt="" loading="lazy" onerror="this.parentNode.classList.add('is-missing')">
-          <div class="pic__draw"><svg viewBox="0 0 60 80"><rect width="60" height="80" fill="#06525c"/><rect x="8" y="10" width="44" height="60" fill="#fff"/><rect x="14" y="20" width="32" height="3" fill="#06525c"/><rect x="14" y="30" width="32" height="3" fill="#06525c"/><rect x="14" y="40" width="20" height="3" fill="#06525c"/><rect x="14" y="56" width="32" height="6" fill="#2f737d"/></svg></div>
-        </div>
-      </div>
-      <ul>
-        <li><a href="tel:01031315305">전화 010-3131-5305</a></li>
-        <li><a href="sms:01031315305">문자 010-3131-5305</a></li>
-        <li><a href="blog/">블로그</a></li>
-        <li><a href="#subjects">과목별 안내</a></li>
-      </ul>
-    </div>
-    <p class="foot__imprint">© 2026 {{SITE_NAME}} · <a href="sitemap.xml">사이트맵</a> · <a href="rss.xml">RSS</a></p>
-  </div>
-</footer>
+{{FOOTER}}
 
-<script src="js/base.js" defer></script>
-<script src="js/site.js" defer></script>
 </body>
 </html>

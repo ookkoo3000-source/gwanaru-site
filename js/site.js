@@ -21,26 +21,14 @@
   render();
 })();
 
-// 2. Index with preview: pointing at a subject bar shows its drawing in the fixed frame.
+// 2. Mobile menu toggle.
 (() => {
-  const bars = document.querySelectorAll('.bar[data-preview]');
-  const frame = document.querySelector('.preview');
-  if (!bars.length || !frame) return;
-  const slides = frame.querySelectorAll('.preview__slide');
-  const show = (id) => slides.forEach((s) => s.classList.toggle('is-on', s.dataset.id === id));
-  show(bars[0].dataset.preview);
-  bars.forEach((bar) => {
-    const on = () => show(bar.dataset.preview);
-    bar.addEventListener('pointerenter', on);
-    bar.addEventListener('focusin', on);
-    bar.addEventListener('toggle', () => { if (bar.open) on(); });
+  const btn = document.querySelector('.menu-btn');
+  if (!btn) return;
+  const head = document.querySelector('.site-head');
+  btn.addEventListener('click', () => {
+    const open = head.classList.toggle('menu-open');
+    btn.setAttribute('aria-expanded', open);
   });
-})();
-
-// 3. Only one subject bar open at a time, so the list stays a list.
-(() => {
-  const bars = [...document.querySelectorAll('.bars .bar')];
-  bars.forEach((bar) => bar.addEventListener('toggle', () => {
-    if (bar.open) bars.forEach((o) => { if (o !== bar) o.open = false; });
-  }));
+  head.querySelectorAll('.gnb a').forEach((a) => a.addEventListener('click', () => head.classList.remove('menu-open')));
 })();
