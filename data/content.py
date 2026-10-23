@@ -5,7 +5,7 @@ SITE_NAME = "과외나루"
 SITE_URL = "https://edumegong.co.kr"          # 도메인을 정하면 여기만 바꾸세요 (끝에 / 없이)
 PHONE = "010-3131-5305"
 PHONE_RAW = "01031315305"
-NAVER_VERIFY = ""                          # 네이버 서치어드바이저에서 받은 확인 코드
+NAVER_VERIFY = "64ac0b67207dea819525196a90214d55f59c830e"                          # 네이버 서치어드바이저에서 받은 확인 코드
 
 GRADES = {
     "elementary": {"name": "초등", "full": "초등학생", "range": "초1~초6",
