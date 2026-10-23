@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+User-agent: Yeti
+Allow: /
+
+Sitemap: https://edumegong.co.kr/sitemap.xml
