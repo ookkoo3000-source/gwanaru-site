@@ -1,7 +1,7 @@
 {
 "": {
 "date": "2026-10-24",
-"hash": "154a929a951f9d2d005198d4f4665f4f9be9433d"
+"hash": "c46e1b5809b43a7c3502b4c9cde10056f0e47ebc"
 },
 "blog/": {
 "date": "2026-10-24",
@@ -13,7 +13,7 @@
 },
 "blog/2026-10-19-online-vs-visit-tutoring/": {
 "date": "2026-10-24",
-"hash": "800810ee70d8be6386b856c6dca90cc186c24a17"
+"hash": "e2638d6a0e20dba709546f7867ba8971ac0faad9"
 },
 "blog/2026-10-20-high1-naesin-study/": {
 "date": "2026-10-24",
@@ -29,15 +29,15 @@
 },
 "blog/2026-10-23-middle-math-tutoring-cost/": {
 "date": "2026-10-24",
-"hash": "471c437985b49f19c44809ad28dd8bf890be9141"
+"hash": "01f0915aeff57bdd1e9c2a793fd8ce3f084640d3"
 },
 "blog/2026-10-24-elementary-math-tutoring-cost/": {
 "date": "2026-10-24",
-"hash": "90bfb52c0719cf777974c008eb2a5e78665bcf3f"
+"hash": "f603be10995ac46f1c5079368bf5c7e7753b805b"
 },
 "blog/2026-10-24-high-math-tutoring-cost/": {
 "date": "2026-10-24",
-"hash": "112c9e8756439250c9e9fa10a19f0119c8a38202"
+"hash": "f3ba938abdfe0019e91f0add0ffc13d65b693163"
 },
 "blog/2026-10-24-middle1-naesin-study/": {
 "date": "2026-10-24",
@@ -45,7 +45,7 @@
 },
 "blog/2026-10-24-naesin-english-study/": {
 "date": "2026-10-24",
-"hash": "27a8b8b8bebbd9105f2cb4af4521cb610d3ddf6c"
+"hash": "91f9762afa4bb518c728c9e46133007e609aff31"
 },
 "blog/2026-10-24-pre-middle-math-prep/": {
 "date": "2026-10-24",
@@ -53,90 +53,90 @@
 },
 "contact/": {
 "date": "2026-10-24",
-"hash": "947c3d0aab2835ea3cbc16a74537e8855ffb76e1"
+"hash": "8297a6863e5f3cda0b01681c37bd875a4ce85128"
 },
 "cost/": {
 "date": "2026-10-24",
-"hash": "8e8fb37649f94fce8405660e0865983a665eeb4c"
+"hash": "115a5cca2539bd4e7e3fb44fe114f8a9358cefb6"
 },
 "elementary-english/": {
 "date": "2026-10-24",
-"hash": "626c37c1db83a5cfa3710b4d80c44045af34a93c"
+"hash": "21a0fcf53ecaf19bc0211883fe7b868f152196ec"
 },
 "elementary-korean/": {
 "date": "2026-10-24",
-"hash": "42a8bdf8554c79a155c2fb696c384fd12dcafc1b"
+"hash": "9058790084bedbd3c40c11cabcc982d0ba0d018a"
 },
 "elementary-math/": {
 "date": "2026-10-24",
-"hash": "31791d64b23cdbf1675e040b0dcef5cb68fb8589"
+"hash": "4f8c7da75b57dbc848da8303ac1d6763074afd77"
 },
 "elementary-science/": {
 "date": "2026-10-24",
-"hash": "afb57e09642999618917f07511ee19531f30e8ee"
+"hash": "67cb5a04d43c5a3d12f83239ca1fa3e86ee26fff"
 },
 "elementary-social/": {
 "date": "2026-10-24",
-"hash": "74fc38414fdaf7e0f6a8ad43e4751ee5ebec3ea7"
+"hash": "c88785d2b128e63c1b5f1616c3ea519ca28acd90"
 },
 "elementary/": {
 "date": "2026-10-24",
-"hash": "9bed06e2b0464c114108838f13c19b9e1d3f0903"
+"hash": "888b1b1cac01ca7a055bb4da5e3aab18dc4d9134"
 },
 "high-english/": {
 "date": "2026-10-24",
-"hash": "42143a54c01a1a99db0b894b454a558d99fe1a1a"
+"hash": "117c571bff42e4a7c86c219e8edd22bc9bd8ed7d"
 },
 "high-korean/": {
 "date": "2026-10-24",
-"hash": "9b438f5ccdffaa1de73b30cf3b1211c899898259"
+"hash": "c7f915ea514d44ba3914222a8b79d763ef96a4c1"
 },
 "high-math/": {
 "date": "2026-10-24",
-"hash": "5f15d17dc6764a5d0931a0c44c885a0e38cab77a"
+"hash": "5d7f018ea8fc00336df3eba51f19f4774035992e"
 },
 "high-science/": {
 "date": "2026-10-24",
-"hash": "3600f4d1dfd17758b06118349bdbb02c57737a1f"
+"hash": "1143b54d7f7a4d9b5148e9faa2bf2bf21f9a1fd8"
 },
 "high-social/": {
 "date": "2026-10-24",
-"hash": "2eca10794a82c916531a8243e879396ae8f3c5bc"
+"hash": "4b3aba057df7cc1ae7ac83f69aa31e0c91da03ac"
 },
 "high/": {
 "date": "2026-10-24",
-"hash": "c95c1e4ad975e17347b9f9c17a14ab78b24d1027"
+"hash": "22c30285763bf64f86322ea21ca95bfe0c0b74a6"
 },
 "middle-english/": {
 "date": "2026-10-24",
-"hash": "7a8366f431ff154c0a92a989eaa6345cb1a84735"
+"hash": "4670f91f0a67b635d11ec14264076c997baf6a22"
 },
 "middle-korean/": {
 "date": "2026-10-24",
-"hash": "739fb5baf63c244ad81ba9d264ef2b8d02071062"
+"hash": "8c8d871cdad214f606a49bb1b9c06eec2359c9e2"
 },
 "middle-math/": {
 "date": "2026-10-24",
-"hash": "bd09d3df636a69a5af5d19060e48054cf8e69947"
+"hash": "a69f75465d5e75083568e99741bfd11088b8fcf6"
 },
 "middle-science/": {
 "date": "2026-10-24",
-"hash": "5876ab88fedba6c13ada13e347544ebe5ae43301"
+"hash": "4d553ebe8f7f6cb9c18158b7838276668753595a"
 },
 "middle-social/": {
 "date": "2026-10-24",
-"hash": "331c764551d0cd7e1bf21e19fb682df111105bdd"
+"hash": "343db64575eb23380c0ebc8afaf07990e44233ad"
 },
 "middle/": {
 "date": "2026-10-24",
-"hash": "00cba360db6498723e3e8f86c28086924ecd28dc"
+"hash": "195a324c525b72a6d18f0c07e29966028191c2d3"
 },
 "online/": {
 "date": "2026-10-24",
-"hash": "89b52abe8e73620eaa322cb0d7af18a058c38fe3"
+"hash": "67711857ede5a52f553a257e8da81a9d38602ffa"
 },
 "visit/": {
 "date": "2026-10-24",
-"hash": "5012951a67b85d152743d350c53fc6295164e173"
+"hash": "2ec2eb99e79a94d6145af9719768afbe4b296992"
 }
 }

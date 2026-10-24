@@ -15,7 +15,7 @@ d.rounded_rectangle((80, 80, 150, 150), 16, fill="#1b3550")
 d.line([(95, 125), (112, 112), (130, 125), (138, 118)], fill="#45c2b6", width=6, joint="curve")
 d.line([(95, 108), (112, 95), (130, 108), (138, 101)], fill="#ffffff", width=6, joint="curve")
 d.text((170, 92), D.SITE_NAME, font=font(44), fill="#ffffff")
-lines = D.TAGLINE.replace(", ", ",\n").split("\n")
+lines = D.TAGLINE.split("\n")
 y = 230
 for ln in lines:
     d.text((80, y), ln, font=font(62), fill="#ffffff"); y += 84

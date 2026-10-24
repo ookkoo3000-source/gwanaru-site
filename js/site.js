@@ -10,6 +10,16 @@ document.addEventListener('click', (e) => {
   if (a) track(a.dataset.track, { page_path: location.pathname });
 });
 
+// 0. 처음 들어온 페이지와 유입 경로를 이 브라우저 탭 동안만 기억(상담 신청서에 함께 보냄. 개인정보 아님)
+(() => {
+  try {
+    if (!sessionStorage.getItem('landing')) {
+      sessionStorage.setItem('landing', location.href);
+      sessionStorage.setItem('referrer', document.referrer || '(직접 접속)');
+    }
+  } catch (_) {}
+})();
+
 // 1. 모바일 메뉴
 (() => {
   const btn = document.querySelector('.menu-btn');
@@ -65,6 +75,12 @@ document.addEventListener('click', (e) => {
     const agree = form.querySelector('input[name="개인정보동의"]');
     if (!agree.checked) return showError('개인정보 수집·이용에 동의해 주세요.', agree);
 
+    // 신청 페이지 = 실제 현재 주소, 처음 들어온 페이지·유입 경로는 별도 항목
+    form.querySelector('input[name="신청 페이지"]').value = location.href;
+    try {
+      form.querySelector('input[name="처음 들어온 페이지"]').value = sessionStorage.getItem('landing') || location.href;
+      form.querySelector('input[name="유입 경로"]').value = sessionStorage.getItem('referrer') || '(확인 안 됨)';
+    } catch (_) {}
     const fd = new FormData(form);
     const data = {};
     for (const [k, v] of fd.entries()) {

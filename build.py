@@ -151,6 +151,11 @@ def foot(depth=1):
 def faq_html(items):
     return '<div class="faq">' + "\n".join(f'<details class="qa"><summary>{esc(q)}</summary><div class="qa__a"><p>{esc(a)}</p></div></details>' for q, a in items) + "</div>"
 
+def basic_faq(name):
+    """핵심 페이지가 아닌 안내 페이지용 짧은 FAQ. 수업료는 여기 한 번만."""
+    return [(f"{name}는 어떻게 시작하나요?", f"전화·문자·신청서로 학년, 과목, 지금 어려운 부분을 알려주시면 조건에 맞는 선생님을 안내하고, {D.TRIAL} 뒤에 계속할지 정하시면 됩니다."),
+            (f"{name} 수업료는 얼마인가요?", D.PRICE_NOTE + " 수업료를 정하는 조건은 수업료 상담 안내 페이지에 있습니다.")]
+
 def faq_ld(items):
     return {"@context": "https://schema.org", "@type": "FAQPage",
             "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in items]}
@@ -169,14 +174,16 @@ def picture(src_base, w, h, alt, lazy=True, cls=""):
     webp = f'<source type="image/webp" srcset="{src_base}.webp">' if (ROOT / (src_base.split("/", 1)[-1] if src_base.startswith("../") else src_base)).with_suffix(".webp").exists() else ""
     return f'<picture{c}>{webp}<img src="{src_base}.jpg" width="{w}" height="{h}" alt="{esc(alt)}"{lz}></picture>'
 
-def form_html(rel="", compact=False):
+def form_html(rel="", page_url=None):
     subj = "".join(f'<label class="chk"><input type="checkbox" name="과목" value="{s["name"]}"> {s["name"]}</label>' for s in D.SUBJECTS.values())
     grades = "".join(f'<option>{o}</option>' for o in ["초등 1~3학년", "초등 4~6학년", "중학교 1학년", "중학교 2학년", "중학교 3학년", "고등학교 1학년", "고등학교 2학년", "고등학교 3학년", "기타"])
     return f"""<form class="apply" id="apply-form" method="post" action="{D.FORM_ENDPOINT}" novalidate>
   <input type="hidden" name="_subject" value="{D.FORM_SUBJECT}">
   <input type="hidden" name="_template" value="table">
   <input type="hidden" name="_captcha" value="false">
-  <input type="hidden" name="출처" value="{D.SITE_URL}/">
+  <input type="hidden" name="신청 페이지" value="{page_url or D.SITE_URL + "/"}">
+  <input type="hidden" name="처음 들어온 페이지" value="">
+  <input type="hidden" name="유입 경로" value="">
   <p class="hp" aria-hidden="true"><label>이 칸은 비워 두세요<input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></p>
   <div class="apply__grid">
     <div class="field-wrap">
@@ -225,7 +232,6 @@ def cta_box(rel="", title="상담 신청", lead=None):
   <div>
     <h2 id="cta-h">{esc(title)}</h2>
     <p>{esc(lead)}</p>
-    <p class="cta-box__price">{esc(D.PRICE_NOTE)}</p>
   </div>
   <div class="cta-box__actions">
     <a class="btn btn--primary btn--lg" href="{rel}contact/">무료 체험 상담하기</a>
@@ -242,7 +248,6 @@ def aside(depth=1, links=()):
     <p>학년, 과목, 지금 어려운 부분을 알려주시면 조건에 맞는 선생님을 안내해 드립니다.</p>
     <a class="btn btn--primary" href="{rel}contact/">상담 신청하기</a>
     <a class="btn btn--ghost" href="tel:{D.PHONE_RAW}" data-track="tel_click">전화 {D.PHONE}</a>
-    <p class="aside-card__note">{esc(D.PRICE_NOTE)}</p>
   </div>
   <nav class="aside-links" aria-label="함께 보기">
     <h2>함께 보기</h2>
@@ -279,11 +284,11 @@ def build_index(posts):
     latest = "".join(f'<li><a href="blog/{p["slug"]}/">{esc(p["title"])}</a><span>{p["date"].isoformat()}</span></li>' for p in posts[:4])
     page = read("templates/index.html")
     rep = {"{{HEADER}}": header(""), "{{FOOTER}}": footer(""), "{{SITE_URL}}": D.SITE_URL, "{{SITE_NAME}}": D.SITE_NAME,
-           "{{TAGLINE}}": esc(D.TAGLINE).replace(", ", ",<br>"), "{{TAGLINE_SUB}}": esc(D.TAGLINE_SUB), "{{PHONE}}": D.PHONE, "{{PHONE_RAW}}": D.PHONE_RAW,
+           "{{TAGLINE}}": esc(D.TAGLINE).replace("\n", "<br>"), "{{TAGLINE_SUB}}": esc(D.TAGLINE_SUB).replace("\n", "<br>"), "{{PHONE}}": D.PHONE, "{{PHONE_RAW}}": D.PHONE_RAW,
            "{{TRIAL}}": D.TRIAL, "{{PRICE_NOTE}}": esc(D.PRICE_NOTE), "{{VERIFY}}": verify_tags(), "{{FONTS}}": FONTS, "{{FAVICON}}": FAVICON, "{{ANALYTICS}}": analytics(),
            "{{HERO_PIC}}": picture("img/hero", 1500, 1000, "책상에서 선생님과 학생이 수학 문제집을 함께 보며 풀이하는 1:1 수업 장면", lazy=False),
            "{{FIND}}": find, "{{CONCERNS}}": concerns, "{{HOW}}": how, "{{TEACHER}}": teacher, "{{STEPS}}": steps,
-           "{{LATEST_POSTS}}": latest, "{{FAQ}}": faq_html(D.FAQ), "{{FORM}}": form_html(""),
+           "{{LATEST_POSTS}}": latest, "{{FAQ}}": faq_html(D.FAQ), "{{FORM}}": form_html("", D.SITE_URL + "/#apply"),
            "{{LD}}": "".join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>' for x in [ORG_LD, faq_ld(D.FAQ)])}
     for k, v in rep.items(): page = page.replace(k, v)
     write("index.html", page)
@@ -319,9 +324,9 @@ def build_keyword_pages(posts):
                       f'<h2>{esc(name)} 자주 묻는 질문</h2>' + faq_html(core["faq"]),
                       related_posts_html(posts, "../", slugs=core["related"])]
             else:
-                b += [f'<h2>진행 순서와 수업료</h2><p>상담 → 선생님 안내 → {D.TRIAL} → 수업 결정 순서로 진행됩니다. 자세한 과정은 <a href="../#steps">진행 순서</a>에 있습니다. {esc(D.PRICE_NOTE)} <a href="../cost/">수업료 상담 안내</a>를 참고하세요.</p>',
+                b += [f'<h2>진행 순서</h2><p>상담 → 선생님 안내 → {D.TRIAL} → 수업 결정 순서로 진행됩니다. 자세한 과정은 <a href="../#steps">진행 순서 안내</a>에 있습니다.</p>',
+                      f'<h2>{esc(name)} 자주 묻는 질문</h2>' + faq_html(basic_faq(name)),
                       related_posts_html(posts, "../", grade=gk, subject=sk)]
-            b.append(cta_box("../", f"{name} 상담"))
             links = [(f'{g["name"]} {o["name"]} 과외', f"{gk}-{ok}/") for ok, o in D.SUBJECTS.items() if ok != sk] + \
                     [(f'{o["name"]} {s["name"]} 과외', f"{ok}-{sk}/") for ok, o in D.GRADES.items() if ok != gk] + \
                     [("화상과외", "online/"), ("방문과외", "visit/"), ("수업료 상담 안내", "cost/")]
@@ -338,9 +343,9 @@ def build_keyword_pages(posts):
              f'<p class="lead">{esc(g["intro"])}</p>',
              f'<h2>과목별 안내</h2><ul class="subject-list">{subj}</ul>',
              "<h2>이런 학생에게 맞습니다</h2><ul class=\"plain\">" + "".join(f"<li>{esc(p)}</li>" for p in g["fit"]) + "</ul>",
-             f'<h2>진행 순서와 수업료</h2><p>상담 → 선생님 안내 → {D.TRIAL} → 수업 결정 순서로 진행됩니다. {esc(D.PRICE_NOTE)} <a href="../cost/">수업료 상담 안내</a>를 참고하세요.</p>',
-             related_posts_html(posts, "../", grade=gk, n=4),
-             cta_box("../", f'{g["name"]} 과외 상담')]
+             f'<h2>진행 순서</h2><p>상담 → 선생님 안내 → {D.TRIAL} → 수업 결정 순서로 진행됩니다. 자세한 과정은 <a href="../#steps">진행 순서 안내</a>에 있습니다.</p>',
+             f'<h2>{esc(g["name"])} 과외 자주 묻는 질문</h2>' + faq_html(basic_faq(g["name"] + " 과외")),
+             related_posts_html(posts, "../", grade=gk, n=4)]
         body = service_page(slug, title, desc, "\n".join(b), [(f'{o["name"]} 과외', f"{ok}/") for ok, o in D.GRADES.items() if ok != gk] + [("화상과외", "online/"), ("방문과외", "visit/")], 1)
         pages.append((slug, lastmod_for(slug, body), "0.9"))
 
@@ -351,8 +356,7 @@ def build_keyword_pages(posts):
         b = [crumbs(1, (p["title"], None)), f'<h1>{esc(p["h1"])}</h1>', f'<p class="lead">{esc(p["intro"])}</p>', secs,
              "<h2>이런 경우에 맞습니다</h2><ul class=\"plain\">" + "".join(f"<li>{esc(x)}</li>" for x in p["fit"]) + "</ul>",
              "<h2>자주 묻는 질문</h2>" + faq_html(p["faq"]),
-             related_posts_html(posts, "../", slugs={"online": ["2026-10-19-online-vs-visit-tutoring", "2026-10-21-pre-high-english-prep"], "visit": ["2026-10-19-online-vs-visit-tutoring", "2026-10-24-elementary-math-tutoring-cost"], "cost": ["2026-10-23-middle-math-tutoring-cost", "2026-10-24-high-math-tutoring-cost", "2026-10-24-elementary-math-tutoring-cost"]}[key]),
-             cta_box("../", p["title"] + " 상담")]
+             related_posts_html(posts, "../", slugs={"online": ["2026-10-19-online-vs-visit-tutoring", "2026-10-21-pre-high-english-prep"], "visit": ["2026-10-19-online-vs-visit-tutoring", "2026-10-24-elementary-math-tutoring-cost"], "cost": ["2026-10-23-middle-math-tutoring-cost", "2026-10-24-high-math-tutoring-cost", "2026-10-24-elementary-math-tutoring-cost"]}[key])]
         body = service_page(slug, title, p["desc"], "\n".join(b), [(f'{o["name"]} 과외', f"{ok}/") for ok, o in D.GRADES.items()] + [(q["title"], f"{qk}/") for qk, q in D.EXTRA_PAGES.items() if qk != key], 1, faq_ld(p["faq"]))
         pages.append((slug, lastmod_for(slug, body), "0.9"))
 
@@ -361,9 +365,8 @@ def build_keyword_pages(posts):
     ask = "".join(f"<li>{esc(x)}</li>" for x in ["학년과 학교, 과목", "최근 시험 결과나 지금 막히는 단원", "학원·학습지 병행 여부", "희망 요일과 시간대", "방문·화상 선호(방문이면 지역)", "아이 성향"])
     b = [crumbs(1, ("상담 신청", None)), "<h1>무료 체험 상담 신청</h1>",
          f'<p class="lead">아래 신청서를 남기시면 확인 후 연락드립니다. 전화 <a href="tel:{D.PHONE_RAW}" data-track="tel_click">{D.PHONE}</a>로 바로 상담하셔도 됩니다. 상담과 {D.TRIAL}은 무료입니다.</p>',
-         form_html("../"),
-         f'<h2>상담에서 여쭤보는 것</h2><p>미리 생각해 두시면 상담이 빨라집니다.</p><ul class="plain">{ask}</ul>',
-         f'<h2>수업료 안내</h2><p>{esc(D.PRICE_NOTE)} 자세한 조건은 <a href="../cost/">수업료 상담 안내</a>에 있습니다.</p>']
+         form_html("../", D.SITE_URL + "/contact/"),
+         f'<h2>상담에서 여쭤보는 것</h2><p>미리 생각해 두시면 상담이 빨라집니다.</p><ul class="plain">{ask}</ul>']
     body = service_page(slug, f"상담 신청 | 초중고 1:1 과외 {D.TRIAL} | {D.SITE_NAME}", f"초·중·고 1:1 과외 무료 체험 상담 신청. 연락처, 학년, 희망 과목, 방문·화상만 남기시면 확인 후 연락드립니다. 전화 {D.PHONE}", "\n".join(b),
                         [(f'{o["name"]} 과외', f"{ok}/") for ok, o in D.GRADES.items()] + [("화상과외", "online/"), ("방문과외", "visit/"), ("수업료 상담 안내", "cost/")], 1)
     pages.append((slug, lastmod_for(slug, body), "0.8"))
@@ -428,7 +431,6 @@ def build_blog(posts):
 <h1>{esc(p["title"])}</h1>
 <p class="post-meta"><time datetime="{p["date"].isoformat()}">{p["date"].strftime("%Y년 %m월 %d일")}</time>{(' · 수정 ' + p["updated"]) if p["updated"] else ''}</p>
 <div class="post">{p["html"]}</div>
-{cta_box("../../", "이 글과 관련된 수업 상담")}
 <h2>함께 읽기</h2>
 <ul class="post-list">{rel_html}</ul>"""
         full = f'<div class="page container"><div class="page__grid"><article class="page__main">{body}</article>{aside(2, hubs + [("화상과외", "online/"), ("방문과외", "visit/"), ("수업료 상담 안내", "cost/")])}</div></div>'
