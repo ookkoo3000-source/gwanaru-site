@@ -284,7 +284,7 @@ def build_index(posts):
     latest = "".join(f'<li><a href="blog/{p["slug"]}/">{esc(p["title"])}</a><span>{p["date"].isoformat()}</span></li>' for p in posts[:4])
     page = read("templates/index.html")
     rep = {"{{HEADER}}": header(""), "{{FOOTER}}": footer(""), "{{SITE_URL}}": D.SITE_URL, "{{SITE_NAME}}": D.SITE_NAME,
-           "{{TAGLINE}}": esc(D.TAGLINE).replace("\n", "<br>"), "{{TAGLINE_SUB}}": esc(D.TAGLINE_SUB).replace("\n", "<br>"), "{{PHONE}}": D.PHONE, "{{PHONE_RAW}}": D.PHONE_RAW,
+           "{{TAGLINE}}": esc(D.TAGLINE).replace("\n", "<br>"), "{{TAGLINE_SUB}}": esc(D.TAGLINE_SUB).replace("\n", "<br> "), "{{PHONE}}": D.PHONE, "{{PHONE_RAW}}": D.PHONE_RAW,
            "{{TRIAL}}": D.TRIAL, "{{PRICE_NOTE}}": esc(D.PRICE_NOTE), "{{VERIFY}}": verify_tags(), "{{FONTS}}": FONTS, "{{FAVICON}}": FAVICON, "{{ANALYTICS}}": analytics(),
            "{{HERO_PIC}}": picture("img/hero", 1500, 1000, "책상에서 선생님과 학생이 수학 문제집을 함께 보며 풀이하는 1:1 수업 장면", lazy=False),
            "{{FIND}}": find, "{{CONCERNS}}": concerns, "{{HOW}}": how, "{{TEACHER}}": teacher, "{{STEPS}}": steps,
