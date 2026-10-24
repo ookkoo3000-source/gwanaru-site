@@ -29,7 +29,7 @@ def write(p, s):
 
 def lastmod_for(path, body, fixed=None):
     """본문 해시가 바뀐 날을 lastmod로. fixed(블로그 글 날짜)가 있으면 그 날과 변경일 중 늦은 쪽."""
-    h = hashlib.sha1(body.encode("utf-8")).hexdigest()
+    h = hashlib.sha1(body.replace("\r\n", "\n").encode("utf-8")).hexdigest()   # OS별 줄바꿈 차이로 해시가 달라지지 않게
     rec = LASTMOD.get(path)
     if not rec or rec.get("hash") != h:
         rec = {"hash": h, "date": TODAY}
