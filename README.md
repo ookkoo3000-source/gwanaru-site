@@ -1,4 +1,4 @@
-# 과외나루 — 사이트 사용 설명
+# 과외나루 — 사이트 사용 설명 (2026-10-24 개편판)
 
 초중고 방문·화상 1:1 과외 상담 사이트. 정적 HTML이라 서버가 필요 없고, 깃허브에 올리면 GitHub Pages가 그대로 서빙합니다.
 
@@ -6,10 +6,12 @@
 
 | 위치 | 하는 일 |
 |---|---|
-| `data/content.py` | **사이트의 모든 문구**(전화번호, 수업료, FAQ, 과목 설명). 고칠 때는 여기만 고치면 됩니다 |
+| `data/content.py` | **사이트의 모든 문구**(전화번호, FAQ, 과목 설명, 학년×과목 본문, 상담 절차). 고칠 때는 여기만 고치면 됩니다. 맨 위 `CLAIMS_TO_CONFIRM`에 아직 확인 안 된 운영 조건 목록이 있습니다 |
 | `templates/index.html` | 메인 페이지 틀 |
 | `posts/*.md` | **블로그 글**. 파일 하나 = 글 하나 = 개별 페이지 (`posts/README.md` 참고) |
-| `build.py` | 위 세 가지로 모든 페이지, `sitemap.xml`, `rss.xml`, `robots.txt`를 만듭니다 |
+| `build.py` | 위 세 가지로 모든 페이지, `404.html`, `sitemap.xml`(lastmod는 `.lastmod.json`으로 실제 변경일 관리), `rss.xml`, `robots.txt`를 만듭니다 |
+| `tools_*.py` | `tools_check_post.py`(블로그 글 스펙 실측), `tools_seo_check.py`(빌드 결과 기술 점검), `tools_audit.py`(라이브 사이트 상태 기록), `tools_images.py`(jpg→webp), `tools_og.py`(og 이미지) |
+| `audit/` | 변경 전 기록(baseline), 과거 URL 조사, 개편 보고서 |
 | `css/`, `js/`, `img/` | 디자인과 스크립트, OG 이미지 |
 | `.github/workflows/build.yml` | 깃허브에 push할 때마다 자동으로 빌드하고 배포 |
 
@@ -55,8 +57,8 @@
 
 ## 꼭 확인해서 고칠 것
 
-- **수업료 범위**: `data/content.py`의 `price`는 참고한 회사 안내표(월 기준으로 추정)를 옮긴 것입니다. 회사 기준과 맞는지 확인하세요.
-- **상담 가능 시간**(평일 09–21, 주말 10–18)은 임의로 넣은 값입니다. `templates/index.html`의 "상담 신청" 카드와 JSON-LD `openingHours`를 고치세요.
-- **사이트 이름 "과외나루"**: 바꾸려면 `data/content.py`의 `SITE_NAME`과 `templates/index.html`의 제목·본문을 같이 고치세요.
-- **사업자 정보**: 회사 소속으로 영업한다면 푸터에 상호·사업자번호를 넣는 것이 좋습니다. 회사와 상의하세요.
-- **사진**: 지금은 그림(SVG)이 자리를 채우고 있습니다. `img/PROMPTS.md`의 프롬프트로 이미지를 만들어 같은 파일 이름으로 `img/`에 넣으면 자동으로 사진이 들어갑니다.
+- **수업료**: 사이트에 금액을 적지 않습니다. 수업료 관련 문구는 `data/content.py`의 `PRICE_NOTE` 하나로 통일되어 있습니다.
+- **운영 조건**: `data/content.py` 맨 위 `CLAIMS_TO_CONFIRM` 목록(체험 수업 조건, 안내 기간, 교체 규칙, 결석 규칙, 상담 시간 등)을 확인해 문구를 확정하세요.
+- **상담 신청서**: `FORM_ENDPOINT`(FormSubmit → 메일)로 전송됩니다. 새 도메인에서 첫 제출 시 FormSubmit이 수신 메일로 활성화 링크를 보내며, 클릭해야 그 뒤 접수가 들어옵니다.
+- **측정**: `GA_ID`를 넣으면 전화 클릭·문자 클릭·웹 접수 성공이 각각 다른 이벤트로 기록됩니다(개인정보는 보내지 않음).
+- **사진**: `img/`의 사진은 참고용 소재이며 실제 선생님·학생이 아닙니다. 실제 수업 자료 사진으로 바꾸려면 같은 파일 이름으로 넣고 `python -I tools_images.py`를 실행하세요.

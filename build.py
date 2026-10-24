@@ -1,34 +1,73 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""사이트 빌드: templates/ + data/content.py + posts/*.md  →  정적 HTML, sitemap.xml, rss.xml, robots.txt
+"""사이트 빌드: templates/ + data/content.py + posts/*.md  →  정적 HTML, sitemap.xml, rss.xml, robots.txt, 404.html
 
-    python3 build.py
+    python build.py
 
-블로그 글은 posts/ 폴더에 .md 파일을 넣기만 하면 됩니다 (형식은 posts/README.md 참고).
+- 블로그 글은 posts/ 폴더에 .md 파일을 넣기만 하면 됩니다 (형식은 posts/README.md 참고).
+- sitemap의 lastmod는 .lastmod.json에 페이지 본문 해시를 저장해 두고, 본문이 실제로 바뀐 날만 갱신합니다.
 """
-import html, os, re, sys, datetime, pathlib, shutil, email.utils
+import html, os, re, sys, json, hashlib, datetime, pathlib, email.utils
 import markdown, yaml
 
 ROOT = pathlib.Path(__file__).parent
 sys.path.insert(0, str(ROOT / "data"))
 import content as D  # noqa: E402
 
-OUT = ROOT  # 결과를 저장소 루트에 바로 씁니다 (GitHub Pages가 루트를 서빙)
+OUT = ROOT
 TODAY = datetime.date.today().isoformat()
 esc = html.escape
+pages = []   # (path, lastmod, priority)
+
+LASTMOD_FILE = ROOT / ".lastmod.json"
+try: LASTMOD = json.loads(LASTMOD_FILE.read_text(encoding="utf-8"))
+except Exception: LASTMOD = {}
 
 def read(p): return (ROOT / p).read_text(encoding="utf-8")
 def write(p, s):
     p = OUT / p; p.parent.mkdir(parents=True, exist_ok=True); p.write_text(s, encoding="utf-8")
 
+def lastmod_for(path, body, fixed=None):
+    """본문 해시가 바뀐 날을 lastmod로. fixed(블로그 글 날짜)가 있으면 그 날과 변경일 중 늦은 쪽."""
+    h = hashlib.sha1(body.encode("utf-8")).hexdigest()
+    rec = LASTMOD.get(path)
+    if not rec or rec.get("hash") != h:
+        rec = {"hash": h, "date": TODAY}
+        LASTMOD[path] = rec
+    d = rec["date"]
+    if fixed and fixed > d: d = fixed
+    return d
+
 # ---------------------------------------------------------------- 공통 조각
+FONTS = """<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">"""
+
+FAVICON = """<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2310243a'/%3E%3Cpath d='M7 20c3-3 6-3 9 0s6 3 9 0' stroke='%2345c2b6' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Cpath d='M7 13c3-3 6-3 9 0s6 3 9 0' stroke='%23fff' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">"""
+
+LOGO_MARK = ('<svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#10243a"/>'
+             '<path d="M7 20c3-3 6-3 9 0s6 3 9 0" stroke="#45c2b6" stroke-width="3" fill="none" stroke-linecap="round"/>'
+             '<path d="M7 13c3-3 6-3 9 0s6 3 9 0" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/></svg>')
+
+def analytics():
+    if not D.GA_ID: return ""
+    return f"""<script async src="https://www.googletagmanager.com/gtag/js?id={D.GA_ID}"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments)}}gtag('js',new Date());gtag('config','{D.GA_ID}',{{anonymize_ip:true}});</script>"""
+
+def verify_tags():
+    t = f'<meta name="naver-site-verification" content="{D.NAVER_VERIFY}">' if D.NAVER_VERIFY else ""
+    if D.GOOGLE_VERIFY: t += f'\n<meta name="google-site-verification" content="{D.GOOGLE_VERIFY}">'
+    return t
+
+ORG_LD = {"@context": "https://schema.org", "@type": "Organization", "name": D.SITE_NAME, "url": D.SITE_URL + "/",
+          "telephone": D.PHONE_INTL, "description": "초·중·고 1:1 방문·화상 과외 상담 및 선생님 연결",
+          "contactPoint": [{"@type": "ContactPoint", "telephone": D.PHONE_INTL, "contactType": "customer service", "availableLanguage": "ko"}]}
+
 def head(title, desc, path, extra="", depth=1, jsonld=None, og_type="website"):
     rel = "../" * depth
     url = f"{D.SITE_URL}/{path}"
-    ld = ""
-    if jsonld:
-        import json
-        ld = f'<script type="application/ld+json">{json.dumps(jsonld, ensure_ascii=False)}</script>'
+    lds = [ORG_LD] if path == "" else []
+    if jsonld: lds += jsonld if isinstance(jsonld, list) else [jsonld]
+    ld = "".join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>' for x in lds)
     return f"""<!doctype html>
 <html lang="ko">
 <head>
@@ -38,7 +77,7 @@ def head(title, desc, path, extra="", depth=1, jsonld=None, og_type="website"):
 <meta name="description" content="{esc(desc)}">
 <link rel="canonical" href="{url}">
 <meta name="robots" content="index, follow">
-<meta name="naver-site-verification" content="{D.NAVER_VERIFY}">
+{verify_tags()}
 <meta property="og:type" content="{og_type}">
 <meta property="og:site_name" content="{D.SITE_NAME}">
 <meta property="og:title" content="{esc(title)}">
@@ -46,44 +85,71 @@ def head(title, desc, path, extra="", depth=1, jsonld=None, og_type="website"):
 <meta property="og:url" content="{url}">
 <meta property="og:image" content="{D.SITE_URL}/img/og.png">
 <meta property="og:locale" content="ko_KR">
+<meta name="theme-color" content="#10243a">
 {extra}
 <link rel="alternate" type="application/rss+xml" title="{D.SITE_NAME} 블로그" href="{D.SITE_URL}/rss.xml">
 {FAVICON}
 {FONTS}
 <link rel="stylesheet" href="{rel}css/site.css">
-<script>document.documentElement.classList.add('js')</script>
 {ld}
+{analytics()}
 </head>
 <body>
+<a class="skip" href="#main">본문으로 바로가기</a>
 {header(rel)}
-<main>
+<main id="main">
 """
 
-def aside(depth=1, links=()):
-    rel = "../" * depth
-    li = "".join(f'<li><a href="{rel}{h}">{esc(t)}</a></li>' for t, h in links)
-    return f"""<aside class="page__aside">
-  <div class="aside-card">
-    <h2>무료 상담 신청</h2>
-    <p>학년, 과목, 지역, 원하는 요일만 알려주세요. 2~3일 안에 선생님 후보를 안내하고 첫 수업은 무료 체험입니다.</p>
-    <a class="btn btn--yellow" href="sms:{D.PHONE_RAW}">💬 문자로 무료 체험 신청</a>
-    <a class="btn btn--brand" href="tel:{D.PHONE_RAW}">📞 {D.PHONE}</a>
-  </div>
-  <div class="aside-links">
-    <h3>함께 보기</h3>
-    <ul>{li}</ul>
-  </div>
-</aside>"""
+NAV = [("초등", "elementary/"), ("중등", "middle/"), ("고등", "high/"), ("화상과외", "online/"), ("방문과외", "visit/"), ("수업료 안내", "cost/"), ("블로그", "blog/")]
 
-def foot(depth=1):
+def header(rel=""):
+    home = rel or "./"
+    links = "".join(f'<a href="{rel}{h}">{esc(t)}</a>' for t, h in NAV)
+    return f"""<header class="site-head">
+  <div class="container site-head__in">
+    <a class="logo" href="{home}">{LOGO_MARK}<span>{D.SITE_NAME}</span></a>
+    <nav class="gnb" id="gnb" aria-label="주요 메뉴">{links}</nav>
+    <div class="site-head__cta">
+      <a class="btn btn--line btn--sm" href="tel:{D.PHONE_RAW}" data-track="tel_click">전화 {D.PHONE}</a>
+      <a class="btn btn--primary btn--sm" href="{rel}contact/">상담 신청</a>
+    </div>
+    <button class="menu-btn" type="button" aria-controls="gnb" aria-expanded="false" aria-label="메뉴 열기"><span></span><span></span><span></span></button>
+  </div>
+</header>"""
+
+def footer(rel=""):
+    home = rel or "./"
+    grades = "".join(f'<li><a href="{rel}{gk}/">{g["name"]} 과외</a></li>' for gk, g in D.GRADES.items())
     return f"""</main>
-{footer("../" * depth)}
+<footer class="site-foot">
+  <div class="container site-foot__in">
+    <div class="site-foot__brand">
+      <a class="logo logo--light" href="{home}">{LOGO_MARK}<span>{D.SITE_NAME}</span></a>
+      <p>초·중·고 1:1 방문·화상 과외 상담과 선생님 연결을 안내합니다.</p>
+      <p class="site-foot__tel"><a href="tel:{D.PHONE_RAW}" data-track="tel_click">{D.PHONE}</a><br><small>전화 연결이 어려우면 문자나 <a href="{rel}contact/">상담 신청서</a>를 남겨 주세요. 확인 후 연락드립니다.</small></p>
+    </div>
+    <div class="site-foot__cols">
+      <div><h2>학년별</h2><ul>{grades}</ul></div>
+      <div><h2>안내</h2><ul><li><a href="{rel}online/">화상과외</a></li><li><a href="{rel}visit/">방문과외</a></li><li><a href="{rel}cost/">수업료 상담 안내</a></li><li><a href="{rel}contact/">상담 신청</a></li></ul></div>
+      <div><h2>읽을거리</h2><ul><li><a href="{rel}blog/">블로그</a></li><li><a href="{rel}rss.xml">RSS</a></li><li><a href="{rel}sitemap.xml">사이트맵</a></li></ul></div>
+    </div>
+  </div>
+  <div class="container site-foot__bottom">© 2026 {D.SITE_NAME}</div>
+</footer>
+<div class="quickbar" id="quickbar">
+  <a href="tel:{D.PHONE_RAW}" data-track="tel_click">전화 상담</a>
+  <a class="quickbar__main" href="{rel}contact/">무료 체험 상담 신청</a>
+</div>
+<script src="{rel}js/site.js" defer></script>
 </body>
 </html>
 """
 
+def foot(depth=1):
+    return footer("../" * depth)
+
 def faq_html(items):
-    return "\n".join(f'<details class="qa"><summary>{esc(q)}</summary><p>{esc(a)}</p></details>' for q, a in items)
+    return '<div class="faq">' + "\n".join(f'<details class="qa"><summary>{esc(q)}</summary><div class="qa__a"><p>{esc(a)}</p></div></details>' for q, a in items) + "</div>"
 
 def faq_ld(items):
     return {"@context": "https://schema.org", "@type": "FAQPage",
@@ -93,167 +159,226 @@ def crumbs(depth, *parts):
     rel = "../" * depth
     out = [f'<a href="{rel}">홈</a>']
     for t, h in parts:
-        out.append(f'<a href="{rel}{h}">{esc(t)}</a>' if h else esc(t))
-    return '<p class="crumbs">' + " › ".join(out) + "</p>"
+        out.append(f'<a href="{rel}{h}">{esc(t)}</a>' if h else f"<span>{esc(t)}</span>")
+    return '<nav class="crumbs" aria-label="현재 위치">' + " › ".join(out) + "</nav>"
 
-FONTS = """<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">"""
+def picture(src_base, w, h, alt, lazy=True, cls=""):
+    """img/foo.jpg + img/foo.webp 가 있으면 <picture>. 첫 화면 이미지는 lazy=False."""
+    lz = ' loading="lazy" decoding="async"' if lazy else ' fetchpriority="high" decoding="async"'
+    c = f' class="{cls}"' if cls else ""
+    webp = f'<source type="image/webp" srcset="{src_base}.webp">' if (ROOT / (src_base.split("/", 1)[-1] if src_base.startswith("../") else src_base)).with_suffix(".webp").exists() else ""
+    return f'<picture{c}>{webp}<img src="{src_base}.jpg" width="{w}" height="{h}" alt="{esc(alt)}"{lz}></picture>'
 
-FAVICON = """<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230e8f86'/%3E%3Cpath d='M6 19c3-3 6-3 10 0s7 3 10 0' stroke='%23fff' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Cpath d='M6 13c3-3 6-3 10 0s7 3 10 0' stroke='%23ffd43b' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">"""
-
-LOGO_MARK = ('<svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#0e8f86"/>'
-             '<path d="M6 19c3-3 6-3 10 0s7 3 10 0" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>'
-             '<path d="M6 13c3-3 6-3 10 0s7 3 10 0" stroke="#ffd43b" stroke-width="3" fill="none" stroke-linecap="round"/></svg>')
-
-def header(rel=""):
-    nav = [("초등 과외", "elementary/"), ("중등 과외", "middle/"), ("고등 과외", "high/"), ("화상과외", "online/"),
-           ("방문과외", "visit/"), ("과외 비용", "cost/"), ("블로그", "blog/")]
-    links = "".join(f'<a href="{rel}{h}">{esc(t)}</a>' for t, h in nav)
-    home = rel or "./"
-    return f"""<header class="site-head">
-  <div class="container site-head__in">
-    <a class="logo" href="{home}">{LOGO_MARK}<span>{D.SITE_NAME}</span></a>
-    <nav class="gnb" id="gnb" aria-label="주요 메뉴">{links}</nav>
-    <a class="btn btn--brand btn--sm head-tel" href="tel:{D.PHONE_RAW}">📞 {D.PHONE}</a>
-    <button class="menu-btn" type="button" aria-controls="gnb" aria-expanded="false" aria-label="메뉴 열기"><span></span><span></span><span></span></button>
-  </div>
-</header>"""
-
-def footer(rel=""):
-    home = rel or "./"
-    grades = "".join(f'<li><a href="{rel}{gk}/">{g["name"]} 과외</a></li>' for gk, g in D.GRADES.items())
-    subj = "".join(f'<li><a href="{rel}middle-{sk}/">{s["name"]} 과외</a></li>' for sk, s in D.SUBJECTS.items())
-    return f"""<footer class="site-foot">
-  <div class="container site-foot__in">
-    <div class="site-foot__brand">
-      <a class="logo logo--light" href="{home}">{LOGO_MARK}<span>{D.SITE_NAME}</span></a>
-      <p>아이와 꼭 맞는 선생님을 잇는 곳.<br>초중고 방문·화상 1:1 과외 상담</p>
-      <p class="site-foot__tel"><a href="tel:{D.PHONE_RAW}">{D.PHONE}</a><br><small>평일 09–21시 · 주말 10–18시 · 문자 언제든</small></p>
+def form_html(rel="", compact=False):
+    subj = "".join(f'<label class="chk"><input type="checkbox" name="과목" value="{s["name"]}"> {s["name"]}</label>' for s in D.SUBJECTS.values())
+    grades = "".join(f'<option>{o}</option>' for o in ["초등 1~3학년", "초등 4~6학년", "중학교 1학년", "중학교 2학년", "중학교 3학년", "고등학교 1학년", "고등학교 2학년", "고등학교 3학년", "기타"])
+    return f"""<form class="apply" id="apply-form" method="post" action="{D.FORM_ENDPOINT}" novalidate>
+  <input type="hidden" name="_subject" value="{D.FORM_SUBJECT}">
+  <input type="hidden" name="_template" value="table">
+  <input type="hidden" name="_captcha" value="false">
+  <input type="hidden" name="출처" value="{D.SITE_URL}/">
+  <p class="hp" aria-hidden="true"><label>이 칸은 비워 두세요<input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></p>
+  <div class="apply__grid">
+    <div class="field-wrap">
+      <label for="f-phone">연락처 <b>*</b></label>
+      <input class="field" id="f-phone" name="연락처" type="tel" inputmode="tel" autocomplete="tel" placeholder="010-0000-0000" required>
     </div>
-    <div class="site-foot__cols">
-      <div><h4>학년별</h4><ul>{grades}</ul></div>
-      <div><h4>과목별</h4><ul>{subj}</ul></div>
-      <div><h4>안내</h4><ul><li><a href="{rel}online/">화상과외</a></li><li><a href="{rel}visit/">방문과외</a></li><li><a href="{rel}cost/">과외 비용</a></li><li><a href="{rel}blog/">블로그</a></li></ul></div>
+    <div class="field-wrap">
+      <label for="f-grade">학년 <b>*</b></label>
+      <select class="field" id="f-grade" name="학년" required><option value="">선택</option>{grades}</select>
     </div>
   </div>
-  <div class="container site-foot__bottom">© 2026 {D.SITE_NAME} · <a href="{rel}sitemap.xml">사이트맵</a> · <a href="{rel}rss.xml">RSS</a></div>
-</footer>
-<div class="quickbar">
-  <a href="tel:{D.PHONE_RAW}">📞 전화 상담</a>
-  <a class="quickbar__main" href="sms:{D.PHONE_RAW}">💬 문자로 무료 체험 신청</a>
-</div>
-<script src="{rel}js/base.js" defer></script>
-<script src="{rel}js/site.js" defer></script>"""
+  <fieldset class="field-wrap">
+    <legend>희망 과목 <b>*</b> <small>(여러 개 선택 가능)</small></legend>
+    <div class="chks">{subj}</div>
+  </fieldset>
+  <fieldset class="field-wrap">
+    <legend>수업 방식 <b>*</b></legend>
+    <div class="chks">
+      <label class="chk"><input type="radio" name="방식" value="방문" required> 방문</label>
+      <label class="chk"><input type="radio" name="방식" value="화상"> 화상</label>
+      <label class="chk"><input type="radio" name="방식" value="상담 후 결정"> 상담 후 결정</label>
+    </div>
+  </fieldset>
+  <div class="field-wrap" id="f-region-wrap">
+    <label for="f-region">지역 <small>(방문 희망 시 시·구·동까지)</small></label>
+    <input class="field" id="f-region" name="지역" type="text" autocomplete="address-level2" placeholder="예: 서울 양천구 목동">
+  </div>
+  <div class="field-wrap">
+    <label for="f-note">학생의 고민 또는 연락 가능한 시간 <small>(선택)</small></label>
+    <textarea class="field" id="f-note" name="내용" rows="3" placeholder="예: 중2 수학 함수 단원부터 막혀요 / 평일 저녁 7시 이후 통화 가능"></textarea>
+  </div>
+  <label class="chk chk--agree"><input type="checkbox" name="개인정보동의" value="동의" required> <span>개인정보 수집·이용에 동의합니다. <b>*</b></span></label>
+  <p class="apply__privacy">수집 항목: 연락처, 학년, 희망 과목, 수업 방식, 지역, 남기신 내용 · 목적: 과외 상담 연락 · 상담 목적 외에는 사용하지 않으며, 삭제를 원하시면 {D.PHONE}로 알려주세요.</p>
+  <p class="apply__error" id="apply-error" role="alert" hidden></p>
+  <button class="btn btn--primary btn--lg apply__submit" type="submit" id="apply-submit">상담 신청 보내기</button>
+  <p class="apply__alt">문자로 남기시려면 <a href="sms:{D.PHONE_RAW}?body={html.escape('과외 상담 신청합니다. 학년/과목/지역: ')}" data-track="sms_click">문자 보내기</a> (문자 앱이 열리고 직접 전송하셔야 접수됩니다) · 전화 <a href="tel:{D.PHONE_RAW}" data-track="tel_click">{D.PHONE}</a></p>
+</form>
+<div class="apply__done" id="apply-done" hidden tabindex="-1">
+  <h3>상담 신청이 접수되었습니다</h3>
+  <p>남겨 주신 연락처로 확인 후 연락드리겠습니다. 급하시면 <a href="tel:{D.PHONE_RAW}" data-track="tel_click">{D.PHONE}</a>로 전화 주세요.</p>
+</div>"""
 
-SUBJECT_ICON = {"math": "➗", "english": "🔤", "korean": "📖", "science": "🔬", "social": "🌏"}
-GRADE_ICON = {"elementary": "🌱", "middle": "📘", "high": "🎓"}
+def cta_box(rel="", title="상담 신청", lead=None):
+    lead = lead or "학년, 과목, 지금 어려운 부분을 알려주시면 조건에 맞는 선생님을 안내해 드립니다. 상담과 " + D.TRIAL + "은 무료입니다."
+    return f"""<section class="cta-box" aria-labelledby="cta-h">
+  <div>
+    <h2 id="cta-h">{esc(title)}</h2>
+    <p>{esc(lead)}</p>
+    <p class="cta-box__price">{esc(D.PRICE_NOTE)}</p>
+  </div>
+  <div class="cta-box__actions">
+    <a class="btn btn--primary btn--lg" href="{rel}contact/">무료 체험 상담하기</a>
+    <a class="btn btn--line btn--lg" href="tel:{D.PHONE_RAW}" data-track="tel_click">전화 상담하기</a>
+  </div>
+</section>"""
 
+def aside(depth=1, links=()):
+    rel = "../" * depth
+    li = "".join(f'<li><a href="{rel}{h}">{esc(t)}</a></li>' for t, h in links)
+    return f"""<aside class="page__aside">
+  <div class="aside-card">
+    <h2>무료 체험 상담</h2>
+    <p>학년, 과목, 지금 어려운 부분을 알려주시면 조건에 맞는 선생님을 안내해 드립니다.</p>
+    <a class="btn btn--primary" href="{rel}contact/">상담 신청하기</a>
+    <a class="btn btn--ghost" href="tel:{D.PHONE_RAW}" data-track="tel_click">전화 {D.PHONE}</a>
+    <p class="aside-card__note">{esc(D.PRICE_NOTE)}</p>
+  </div>
+  <nav class="aside-links" aria-label="함께 보기">
+    <h2>함께 보기</h2>
+    <ul>{li}</ul>
+  </nav>
+</aside>"""
+
+def related_posts_html(posts, rel, grade=None, subject=None, slugs=None, n=3):
+    if slugs:
+        sel = [p for s in slugs for p in posts if p["slug"] == s]
+    else:
+        sel = [p for p in posts if (grade and p["grade"] == grade) or (subject and p["subject"] == subject)]
+        sel = sorted(sel, key=lambda p: ((p["grade"] == grade) + (p["subject"] == subject), p["date"]), reverse=True)
+    sel = sel[:n]
+    if not sel: return ""
+    li = "".join(f'<li><a href="{rel}blog/{p["slug"]}/">{esc(p["title"])}</a><span>{p["date"].isoformat()}</span></li>' for p in sel)
+    return f'<h2>관련 글</h2><ul class="post-list">{li}</ul>'
+
+# ---------------------------------------------------------------- 메인
 def build_index(posts):
-    import json
-    grade_cards = []
-    for i, (gk, g) in enumerate(D.GRADES.items()):
-        li = "".join(f'<a href="{gk}-{sk}/">{esc(s["name"])}</a>' for sk, s in D.SUBJECTS.items())
-        grade_cards.append(f'''<article class="grade" data-reveal style="--i:{i}">
-  <a class="grade__head" href="{gk}/"><span class="grade__ic">{GRADE_ICON[gk]}</span><span><b>{g["name"]} 과외</b><small>{g["range"]}</small></span><span class="grade__go">→</span></a>
-  <p>{esc(g["intro"])}</p>
-  <div class="chips">{li}</div>
-</article>''')
-    subject_cards = []
-    for i, (sk, s) in enumerate(D.SUBJECTS.items()):
-        subject_cards.append(f'''<a class="subj" href="middle-{sk}/" data-reveal style="--i:{i}">
-  <div class="subj__img"><img src="img/subject-{sk}.jpg" width="1200" height="900" alt="{esc(s["name"])} 수업 자료" loading="lazy"></div>
-  <div class="subj__body"><b>{SUBJECT_ICON[sk]} {esc(s["name"])}</b><p>{esc(s["desc"])}</p></div>
-</a>''')
-    latest = "".join(f'''<a class="post-card" href="blog/{p["slug"]}/"><time datetime="{p["date"].isoformat()}">{p["date"].strftime("%Y.%m.%d")}</time><b>{esc(p["title"])}</b><p>{esc(p["desc"][:80])}</p><span class="more">읽어 보기 →</span></a>''' for p in posts[:3]) or '<p class="muted">첫 글을 준비하고 있습니다.</p>'
+    # ② 학년×과목 찾기: 행=과목, 열=학년. 버튼 이름 = 도착 페이지 이름
+    rows = []
+    for sk, s in D.SUBJECTS.items():
+        cells = "".join(f'<td><a href="{gk}-{sk}/">{g["name"]} {s["name"]}</a></td>' for gk, g in D.GRADES.items())
+        rows.append(f'<tr><th scope="row">{esc(s["name"])}<small>{esc(s["desc"])}</small></th>{cells}</tr>')
+    heads = "".join(f'<th scope="col"><a href="{gk}/">{g["name"]} 과외<small>{g["range"]}</small></a></th>' for gk, g in D.GRADES.items())
+    find = f'<div class="find-wrap"><table class="find"><thead><tr><th scope="col">과목</th>{heads}</tr></thead><tbody>{"".join(rows)}</tbody></table></div>'
+    concerns = "".join(f'<li><h3>{esc(q)}</h3><p>{esc(a)}</p><a href="{h}">관련 수업 안내 →</a></li>' for q, a, h in D.CONCERNS)
+    proc = {t: p for t, p in D.PROCESS}
+    how_keys = ["상담에서 확인하는 것", "체험 수업에서 확인할 수 있는 것", "진도와 교재", "숙제와 오답", "학부모님께 전달"]
+    how = "".join(f'<div class="dl__row"><dt>{esc(k)}</dt><dd>{esc(proc[k])}</dd></div>' for k in how_keys)
+    teacher = "".join(f'<div class="dl__row"><dt>{esc(k)}</dt><dd>{esc(proc[k])}</dd></div>' for k in ["선생님을 연결하는 기준", "선생님과 맞지 않을 때"])
+    steps = "".join(f'<li><span class="step__no">{i}</span><h3>{esc(t)}</h3><p>{esc(d)}</p></li>' for i, (t, d) in enumerate(D.STEPS, 1))
+    latest = "".join(f'<li><a href="blog/{p["slug"]}/">{esc(p["title"])}</a><span>{p["date"].isoformat()}</span></li>' for p in posts[:4])
     page = read("templates/index.html")
-    page = (page.replace("{{HEADER}}", header("")).replace("{{FOOTER}}", footer(""))
-                .replace("{{SITE_URL}}", D.SITE_URL).replace("{{SITE_NAME}}", D.SITE_NAME).replace("{{NAVER_VERIFY}}", D.NAVER_VERIFY)
-                .replace("{{FONTS}}", FONTS).replace("{{FAVICON}}", FAVICON)
-                .replace("{{GRADE_CARDS}}", "\n".join(grade_cards)).replace("{{SUBJECT_CARDS}}", "\n".join(subject_cards))
-                .replace("{{LATEST_POSTS}}", latest)
-                .replace("{{FAQ}}", faq_html(D.FAQ)).replace("{{FAQ_LD}}", json.dumps(faq_ld(D.FAQ), ensure_ascii=False)))
+    rep = {"{{HEADER}}": header(""), "{{FOOTER}}": footer(""), "{{SITE_URL}}": D.SITE_URL, "{{SITE_NAME}}": D.SITE_NAME,
+           "{{TAGLINE}}": esc(D.TAGLINE).replace(", ", ",<br>"), "{{TAGLINE_SUB}}": esc(D.TAGLINE_SUB), "{{PHONE}}": D.PHONE, "{{PHONE_RAW}}": D.PHONE_RAW,
+           "{{TRIAL}}": D.TRIAL, "{{PRICE_NOTE}}": esc(D.PRICE_NOTE), "{{VERIFY}}": verify_tags(), "{{FONTS}}": FONTS, "{{FAVICON}}": FAVICON, "{{ANALYTICS}}": analytics(),
+           "{{HERO_PIC}}": picture("img/hero", 1500, 1000, "책상에서 선생님과 학생이 수학 문제집을 함께 보며 풀이하는 1:1 수업 장면", lazy=False),
+           "{{FIND}}": find, "{{CONCERNS}}": concerns, "{{HOW}}": how, "{{TEACHER}}": teacher, "{{STEPS}}": steps,
+           "{{LATEST_POSTS}}": latest, "{{FAQ}}": faq_html(D.FAQ), "{{FORM}}": form_html(""),
+           "{{LD}}": "".join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>' for x in [ORG_LD, faq_ld(D.FAQ)])}
+    for k, v in rep.items(): page = page.replace(k, v)
     write("index.html", page)
-    pages.append(("", TODAY, "1.0"))
+    body = page.split("<main", 1)[1].split("</main>", 1)[0]
+    pages.append(("", lastmod_for("", body), "1.0"))
 
-pages = []   # (path, lastmod, priority)
+# ---------------------------------------------------------------- 학년×과목 · 학년 · 안내 페이지
+def service_page(slug, title, desc, body, links, depth=1, jsonld=None, extra=""):
+    full = f'<div class="page container"><div class="page__grid"><article class="page__main">{body}</article>{aside(depth, links)}</div></div>'
+    write(slug + "index.html", head(title, desc, slug, extra, depth, jsonld) + full + foot(depth))
+    return body
 
-# ---------------------------------------------------------------- 키워드 페이지 (학년×과목, 학년 허브, 기타)
-def build_keyword_pages():
+def build_keyword_pages(posts):
     for gk, g in D.GRADES.items():
         for sk, s in D.SUBJECTS.items():
             slug = f"{gk}-{sk}/"
-            kw = f'{g["name"]}{s["name"]}과외'
-            title = f'{g["name"]} {s["name"]} 과외 | 방문·화상 1:1, 무료 체험 | {D.SITE_NAME}'
-            desc = f'{g["full"]} {s["name"]} 1:1 과외 상담. {s["desc"]} 방문·화상 모두 가능, 첫 수업 무료 체험. 전화 {D.PHONE}'
-            faq = [(f'{g["name"]} {s["name"]} 과외는 주 몇 회가 적당한가요?', "주 1회로 시작해 시험 전후에 주 2회로 늘리는 가정이 많습니다. 아이의 현재 상태를 듣고 상담에서 같이 정합니다."),
-                   (f'{g["name"]} {s["name"]} 과외 비용은 얼마인가요?', f'월 기준 {", ".join(f"{n} {p}" for n, p in g["price"])} 범위이며 정확한 금액은 상담에서 확정합니다. 상담과 체험은 무료입니다.'),
-                   ("방문과 화상 중 어느 쪽이 좋나요?", "집중이 어려우면 방문, 일정이 빡빡하면 화상이 맞는 편입니다. 체험 수업을 한 번 해 보고 정해도 됩니다.")]
-            body = f"""<section class="page wrap"><div class="page__grid"><article class="page__main">
-{crumbs(1, (g["name"] + " 과외", gk + "/"), (kw, None))}
-<h1>{esc(g["name"])} {esc(s["name"])} 과외</h1>
-<p class="lead">{esc(g["full"])} {esc(s["name"])} 1:1 과외를 방문 또는 화상으로 상담하고 선생님을 연결합니다. 첫 수업은 무료 체험입니다.</p>
-<h2>{esc(g["name"])} {esc(s["name"])}, 이렇게 수업합니다</h2>
-<p>{esc(s["intro"])}</p>
-<p>{esc(g["intro"])}</p>
-<ul class="plain">{"".join(f"<li>{esc(p)}</li>" for p in s["points"])}</ul>
-<h2>이런 학생에게 맞습니다</h2>
-<ul class="plain">{"".join(f"<li>{esc(p)}</li>" for p in g["fit"])}</ul>
-<h2>{esc(g["name"])} {esc(s["name"])} 과외 비용</h2>
-<p>월 기준 안내 범위입니다. {esc(", ".join(f"{n} {p}" for n, p in g["price"]))}. 과목 수, 횟수, 선생님에 따라 달라지며 정확한 금액은 상담에서 확정합니다. 상담과 체험 수업은 무료입니다.</p>
-<h2>진행 순서</h2>
-<p>오늘 전화나 문자로 학년, 과목, 지역, 원하는 요일을 알려주시면 2~3일 안에 선생님 후보 1~2명을 안내합니다. 그 주에 무료 체험 수업을 하고, 계속할지는 가족이 정합니다. 첫 수업까지 보통 일주일입니다.</p>
-<h2>자주 묻는 질문</h2>
-<div class="faq">{faq_html(faq)}</div>
-</article>
-{aside(1, [(f'{g["name"]} {o["name"]} 과외', f"{gk}-{ok}/") for ok, o in D.SUBJECTS.items() if ok != sk] + [(f'{o["name"]} {s["name"]} 과외', f"{ok}-{sk}/") for ok, o in D.GRADES.items() if ok != gk] + [("화상과외", "online/"), ("방문과외", "visit/"), ("과외 비용", "cost/")])}
-</div></section>"""
-            extra = f'<meta name="keywords" content="{kw}, {g["name"]} {s["name"]} 과외, {s["name"]}과외, {g["name"]}과외, 화상과외, 방문과외">'
-            write(slug + "index.html", head(title, desc, slug, extra, 1, faq_ld(faq)) + body + foot(1))
-            pages.append((slug, TODAY, "0.8"))
+            name = f'{g["name"]} {s["name"]} 과외'
+            f = D.FOCUS[(gk, sk)]
+            core = D.CORE_PAGES.get(f"{gk}-{sk}")
+            title = f'{name} | 1:1 방문·화상, {D.TRIAL} | {D.SITE_NAME}'
+            desc = f'{g["full"]} {s["name"]} 1:1 과외 상담. {f["p"][0][:70]}… 방문·화상 선택, 상담과 체험 수업은 무료.'
+            b = [crumbs(1, (g["name"] + " 과외", gk + "/"), (name, None)),
+                 f"<h1>{esc(name)}</h1>",
+                 f'<p class="lead">{esc(g["full"])} {esc(s["name"])} 1:1 과외를 방문 또는 화상으로 상담하고, 조건에 맞는 선생님을 안내합니다. 상담과 {D.TRIAL}은 무료입니다.</p>',
+                 f'<h2>{esc(f["h"])}</h2>' + "".join(f"<p>{esc(x)}</p>" for x in f["p"]),
+                 "<h2>이런 학생에게 맞습니다</h2><ul class=\"plain\">" + "".join(f"<li>{esc(x)}</li>" for x in g["fit"]) + "</ul>",
+                 "<h2>상담과 체험 수업에서 확인하는 것</h2><p>상담에서는 아래를 여쭤보고, 체험 수업에서는 선생님이 직접 점검합니다.</p><ul class=\"plain\">" + "".join(f"<li>{esc(x)}</li>" for x in f["check"]) + "</ul>",
+                 f'<h2>{esc(s["name"])} 수업은 이렇게 진행합니다</h2><p>{esc(s["intro"])}</p><ul class="plain">' + "".join(f"<li>{esc(x)}</li>" for x in s["points"]) + "</ul>"]
+            if core:
+                b += [f'<h2>{esc(core["example"]["h"])}</h2><p class="example">{esc(core["example"]["p"])}</p>',
+                      f'<h2>학습 계획과 교재, 숙제 관리</h2><p>{esc(core["plan"])}</p>',
+                      f'<h2>방문과 화상, 어느 쪽이 맞을까</h2><p>{esc(core["mode"])}</p>',
+                      f'<h2>{esc(name)} 자주 묻는 질문</h2>' + faq_html(core["faq"]),
+                      related_posts_html(posts, "../", slugs=core["related"])]
+            else:
+                b += [f'<h2>진행 순서와 수업료</h2><p>상담 → 선생님 안내 → {D.TRIAL} → 수업 결정 순서로 진행됩니다. 자세한 과정은 <a href="../#steps">진행 순서</a>에 있습니다. {esc(D.PRICE_NOTE)} <a href="../cost/">수업료 상담 안내</a>를 참고하세요.</p>',
+                      related_posts_html(posts, "../", grade=gk, subject=sk)]
+            b.append(cta_box("../", f"{name} 상담"))
+            links = [(f'{g["name"]} {o["name"]} 과외', f"{gk}-{ok}/") for ok, o in D.SUBJECTS.items() if ok != sk] + \
+                    [(f'{o["name"]} {s["name"]} 과외', f"{ok}-{sk}/") for ok, o in D.GRADES.items() if ok != gk] + \
+                    [("화상과외", "online/"), ("방문과외", "visit/"), ("수업료 상담 안내", "cost/")]
+            body = service_page(slug, title, desc, "\n".join(b), links, 1, faq_ld(core["faq"]) if core else None)
+            pages.append((slug, lastmod_for(slug, body), "0.9" if core else "0.8"))
 
         # 학년 허브
         slug = f"{gk}/"
-        title = f'{g["name"]} 과외 | 국어·영어·수학·과학·사회 1:1 | {D.SITE_NAME}'
-        desc = f'{g["full"]} 1:1 과외 상담. 과목별 수업 방식과 월 비용 범위, 방문·화상 선택. 첫 수업 무료 체험. 전화 {D.PHONE}'
-        subj = "".join(f'<li><a href="../{gk}-{sk}/">{esc(g["name"])} {esc(s["name"])} 과외</a> — {esc(s["desc"])}</li>' for sk, s in D.SUBJECTS.items())
-        body = f"""<section class="page wrap"><div class="page__grid"><article class="page__main">
-{crumbs(1, (g["name"] + " 과외", None))}
-<h1>{esc(g["name"])} 과외 <span class="muted">{esc(g["range"])}</span></h1>
-<p class="lead">{esc(g["intro"])}</p>
-<h2>과목별 안내</h2>
-<ul class="plain">{subj}</ul>
-<h2>이런 학생에게 맞습니다</h2>
-<ul class="plain">{"".join(f"<li>{esc(p)}</li>" for p in g["fit"])}</ul>
-<h2>{esc(g["name"])} 과외 비용</h2>
-<p>월 기준 안내 범위: {esc(", ".join(f"{n} {p}" for n, p in g["price"]))}. 정확한 금액은 상담에서 확정하며 상담과 체험은 무료입니다. 자세한 설명은 <a href="../cost/">과외 비용</a> 페이지에 있습니다.</p>
-<h2>자주 묻는 질문</h2>
-<div class="faq">{faq_html(D.FAQ[:6])}</div>
-</article>
-{aside(1, [(f'{o["name"]} 과외', f"{ok}/") for ok, o in D.GRADES.items() if ok != gk] + [("화상과외", "online/"), ("방문과외", "visit/")])}
-</div></section>"""
-        write(slug + "index.html", head(title, desc, slug, f'<meta name="keywords" content="{g["name"]}과외, {g["name"]} 과외, {g["full"]} 과외, 1:1 과외">', 1, faq_ld(D.FAQ[:6])) + body + foot(1))
-        pages.append((slug, TODAY, "0.9"))
+        title = f'{g["name"]} 과외 | 국어·영어·수학·과학·사회 1:1 방문·화상 | {D.SITE_NAME}'
+        desc = f'{g["full"]} 1:1 과외 상담. {g["intro"][:60]}… 과목별 수업 안내와 방문·화상 선택, 상담과 체험 수업은 무료.'
+        subj = "".join(f'<li><a href="../{gk}-{sk}/">{esc(g["name"])} {esc(s["name"])} 과외</a><p>{esc(D.FOCUS[(gk, sk)]["p"][0][:90])}…</p></li>' for sk, s in D.SUBJECTS.items())
+        b = [crumbs(1, (g["name"] + " 과외", None)),
+             f'<h1>{esc(g["name"])} 과외 <span class="muted">{esc(g["range"])}</span></h1>',
+             f'<p class="lead">{esc(g["intro"])}</p>',
+             f'<h2>과목별 안내</h2><ul class="subject-list">{subj}</ul>',
+             "<h2>이런 학생에게 맞습니다</h2><ul class=\"plain\">" + "".join(f"<li>{esc(p)}</li>" for p in g["fit"]) + "</ul>",
+             f'<h2>진행 순서와 수업료</h2><p>상담 → 선생님 안내 → {D.TRIAL} → 수업 결정 순서로 진행됩니다. {esc(D.PRICE_NOTE)} <a href="../cost/">수업료 상담 안내</a>를 참고하세요.</p>',
+             related_posts_html(posts, "../", grade=gk, n=4),
+             cta_box("../", f'{g["name"]} 과외 상담')]
+        body = service_page(slug, title, desc, "\n".join(b), [(f'{o["name"]} 과외', f"{ok}/") for ok, o in D.GRADES.items() if ok != gk] + [("화상과외", "online/"), ("방문과외", "visit/")], 1)
+        pages.append((slug, lastmod_for(slug, body), "0.9"))
 
     for key, p in D.EXTRA_PAGES.items():
         slug = f"{key}/"
-        title = f'{p["title"]} | 초중고 1:1, 무료 체험 | {D.SITE_NAME}'
-        body = f"""<section class="page wrap"><div class="page__grid"><article class="page__main">
-{crumbs(1, (p["title"], None))}
-<h1>{esc(p["h1"])}</h1>
-<p class="lead">{esc(p["intro"])}</p>
-<h2>특징</h2>
-<ul class="plain">{"".join(f"<li>{esc(x)}</li>" for x in p["points"])}</ul>
-<h2>이런 학생에게 맞습니다</h2>
-<ul class="plain">{"".join(f"<li>{esc(x)}</li>" for x in p["fit"])}</ul>
-<h2>진행 순서</h2>
-<p>전화나 문자로 학년, 과목, 지역, 원하는 요일을 알려주시면 2~3일 안에 선생님 후보를 안내하고, 그 주에 무료 체험 수업을 합니다. 체험 뒤에 계속할지는 가족이 정합니다.</p>
-<h2>자주 묻는 질문</h2>
-<div class="faq">{faq_html(p["faq"])}</div>
-</article>
-{aside(1, [(f'{o["name"]} 과외', f"{ok}/") for ok, o in D.GRADES.items()] + [(q["title"], f"{qk}/") for qk, q in D.EXTRA_PAGES.items() if qk != key])}
-</div></section>"""
-        write(slug + "index.html", head(title, p["desc"], slug, f'<meta name="keywords" content="{p["title"]}, 1:1 과외, 과외 상담">', 1, faq_ld(p["faq"])) + body + foot(1))
-        pages.append((slug, TODAY, "0.9"))
+        title = f'{p["title"]} | {D.SITE_NAME}' if key == "cost" else f'{p["title"]} | 초중고 1:1, {D.TRIAL} | {D.SITE_NAME}'
+        secs = "".join(f"<h2>{esc(h)}</h2><p>{esc(t)}</p>" for h, t in p["sections"])
+        b = [crumbs(1, (p["title"], None)), f'<h1>{esc(p["h1"])}</h1>', f'<p class="lead">{esc(p["intro"])}</p>', secs,
+             "<h2>이런 경우에 맞습니다</h2><ul class=\"plain\">" + "".join(f"<li>{esc(x)}</li>" for x in p["fit"]) + "</ul>",
+             "<h2>자주 묻는 질문</h2>" + faq_html(p["faq"]),
+             related_posts_html(posts, "../", slugs={"online": ["2026-10-19-online-vs-visit-tutoring", "2026-10-21-pre-high-english-prep"], "visit": ["2026-10-19-online-vs-visit-tutoring", "2026-10-24-elementary-math-tutoring-cost"], "cost": ["2026-10-23-middle-math-tutoring-cost", "2026-10-24-high-math-tutoring-cost", "2026-10-24-elementary-math-tutoring-cost"]}[key]),
+             cta_box("../", p["title"] + " 상담")]
+        body = service_page(slug, title, p["desc"], "\n".join(b), [(f'{o["name"]} 과외', f"{ok}/") for ok, o in D.GRADES.items()] + [(q["title"], f"{qk}/") for qk, q in D.EXTRA_PAGES.items() if qk != key], 1, faq_ld(p["faq"]))
+        pages.append((slug, lastmod_for(slug, body), "0.9"))
+
+    # 상담 신청 페이지
+    slug = "contact/"
+    ask = "".join(f"<li>{esc(x)}</li>" for x in ["학년과 학교, 과목", "최근 시험 결과나 지금 막히는 단원", "학원·학습지 병행 여부", "희망 요일과 시간대", "방문·화상 선호(방문이면 지역)", "아이 성향"])
+    b = [crumbs(1, ("상담 신청", None)), "<h1>무료 체험 상담 신청</h1>",
+         f'<p class="lead">아래 신청서를 남기시면 확인 후 연락드립니다. 전화 <a href="tel:{D.PHONE_RAW}" data-track="tel_click">{D.PHONE}</a>로 바로 상담하셔도 됩니다. 상담과 {D.TRIAL}은 무료입니다.</p>',
+         form_html("../"),
+         f'<h2>상담에서 여쭤보는 것</h2><p>미리 생각해 두시면 상담이 빨라집니다.</p><ul class="plain">{ask}</ul>',
+         f'<h2>수업료 안내</h2><p>{esc(D.PRICE_NOTE)} 자세한 조건은 <a href="../cost/">수업료 상담 안내</a>에 있습니다.</p>']
+    body = service_page(slug, f"상담 신청 | 초중고 1:1 과외 {D.TRIAL} | {D.SITE_NAME}", f"초·중·고 1:1 과외 무료 체험 상담 신청. 연락처, 학년, 희망 과목, 방문·화상만 남기시면 확인 후 연락드립니다. 전화 {D.PHONE}", "\n".join(b),
+                        [(f'{o["name"]} 과외', f"{ok}/") for ok, o in D.GRADES.items()] + [("화상과외", "online/"), ("방문과외", "visit/"), ("수업료 상담 안내", "cost/")], 1)
+    pages.append((slug, lastmod_for(slug, body), "0.8"))
+
+    # 404 (GitHub Pages가 자동 사용). 과거 도메인 주소로 들어온 방문자 안내용 — 색인 제외
+    nf = f"""<div class="page container"><div class="page__grid"><article class="page__main">
+<h1>찾으시는 페이지가 없습니다</h1>
+<p class="lead">주소가 바뀌었거나 삭제된 페이지입니다. 이 주소(edumegong.co.kr)는 현재 초·중·고 1:1 과외 상담 사이트 <strong>{D.SITE_NAME}</strong>로 운영되고 있으며, 이전에 운영되던 사이트의 페이지는 제공하지 않습니다.</p>
+<h2>이런 내용을 찾고 계셨다면</h2>
+<ul class="plain"><li><a href="/">과외나루 홈</a> — 초·중·고 1:1 과외 상담 안내</li><li><a href="/online/">화상과외</a> · <a href="/visit/">방문과외</a></li><li><a href="/blog/">블로그</a> — 학년별·과목별 공부와 과외 선택에 관한 글</li><li><a href="/contact/">상담 신청</a></li></ul>
+</article>{aside(1, [(f'{o["name"]} 과외', f"{ok}/") for ok, o in D.GRADES.items()])}</div></div>"""
+    h = head(f"페이지를 찾을 수 없습니다 | {D.SITE_NAME}", "요청하신 페이지가 없습니다.", "404.html", "", 0).replace('<meta name="robots" content="index, follow">', '<meta name="robots" content="noindex, follow">').replace(f'<link rel="canonical" href="{D.SITE_URL}/404.html">', "")
+    page404 = h + nf + foot(0)
+    page404 = re.sub(r'(href|src)="(?!https?:|//|/|#|tel:|sms:|mailto:|data:)(\./)?', r'="/', page404)
+    write("404.html", page404)
 
 # ---------------------------------------------------------------- 블로그
 def slugify(s):
@@ -263,7 +388,7 @@ def slugify(s):
 def load_posts():
     posts = []
     for f in sorted((ROOT / "posts").glob("*.md")):
-        if f.name.lower() == "readme.md": continue
+        if f.name.lower() in ("readme.md", "keywords.md"): continue
         text = f.read_text(encoding="utf-8")
         m = re.match(r"^---\s*\n(.*?)\n---\s*\n(.*)$", text, re.S)
         if not m:
@@ -279,56 +404,55 @@ def load_posts():
         plain = re.sub(r"<[^>]+>", "", body_html)
         desc = meta.get("description") or re.sub(r"\s+", " ", plain).strip()[:150]
         posts.append({"title": str(meta["title"]), "date": date, "slug": slug, "html": body_html, "desc": desc,
-                      "keywords": meta.get("keywords", ""), "grade": meta.get("grade", ""), "subject": meta.get("subject", "")})
+                      "keywords": meta.get("keywords", ""), "grade": meta.get("grade", ""), "subject": meta.get("subject", ""), "updated": str(meta.get("updated", "") or "")})
     posts.sort(key=lambda p: (p["date"], p["slug"]), reverse=True)
     return posts
 
 def build_blog(posts):
-    for i, p in enumerate(posts):
+    for p in posts:
         slug = f"blog/{p['slug']}/"
         title = f'{p["title"]} | {D.SITE_NAME} 블로그'
-        related = [q for q in posts if q is not p and (q["grade"] == p["grade"] or q["subject"] == p["subject"])][:5] or [q for q in posts if q is not p][:5]
-        rel_html = "".join(f'<li><a href="../{q["slug"]}/">{esc(q["title"])}</a></li>' for q in related)
+        related = [q for q in posts if q is not p and (q["grade"] == p["grade"] or q["subject"] == p["subject"])][:4] or [q for q in posts if q is not p][:4]
+        rel_html = "".join(f'<li><a href="../{q["slug"]}/">{esc(q["title"])}</a><span>{q["date"].isoformat()}</span></li>' for q in related)
+        mod = p["updated"] or p["date"].isoformat()
         ld = {"@context": "https://schema.org", "@type": "Article", "headline": p["title"], "description": p["desc"],
-              "datePublished": p["date"].isoformat(), "dateModified": p["date"].isoformat(),
+              "datePublished": p["date"].isoformat(), "dateModified": mod,
               "author": {"@type": "Organization", "name": D.SITE_NAME}, "publisher": {"@type": "Organization", "name": D.SITE_NAME},
               "mainEntityOfPage": f"{D.SITE_URL}/{slug}"}
-        extra = f'<meta name="keywords" content="{esc(p["keywords"])}"><meta property="article:published_time" content="{p["date"].isoformat()}">'
-        body = f"""<section class="page wrap"><div class="page__grid"><article class="page__main">
-{crumbs(2, ("블로그", "blog/"), (p["title"], None))}
+        extra = f'<meta property="article:published_time" content="{p["date"].isoformat()}">'
+        hubs = []
+        if p["grade"] in D.GRADES and p["subject"] in D.SUBJECTS:
+            hubs.append((f'{D.GRADES[p["grade"]]["name"]} {D.SUBJECTS[p["subject"]]["name"]} 과외', f'{p["grade"]}-{p["subject"]}/'))
+        if p["grade"] in D.GRADES: hubs.append((f'{D.GRADES[p["grade"]]["name"]} 과외', f'{p["grade"]}/'))
+        body = f"""{crumbs(2, ("블로그", "blog/"), (p["title"], None))}
 <h1>{esc(p["title"])}</h1>
-<p class="crumbs"><time datetime="{p["date"].isoformat()}">{p["date"].strftime("%Y년 %m월 %d일")}</time></p>
+<p class="post-meta"><time datetime="{p["date"].isoformat()}">{p["date"].strftime("%Y년 %m월 %d일")}</time>{(' · 수정 ' + p["updated"]) if p["updated"] else ''}</p>
 <div class="post">{p["html"]}</div>
+{cta_box("../../", "이 글과 관련된 수업 상담")}
 <h2>함께 읽기</h2>
-<ul class="plain">{rel_html}</ul>
-</article>
-{aside(2, [(f'{g["name"]} 과외', f"{gk}/") for gk, g in D.GRADES.items()] + [("화상과외", "online/"), ("과외 비용", "cost/")])}
-</div></section>"""
-        write(slug + "index.html", head(title, p["desc"], slug, extra, 2, ld, "article") + body + foot(2))
-        pages.append((slug, p["date"].isoformat(), "0.7"))
+<ul class="post-list">{rel_html}</ul>"""
+        full = f'<div class="page container"><div class="page__grid"><article class="page__main">{body}</article>{aside(2, hubs + [("화상과외", "online/"), ("방문과외", "visit/"), ("수업료 상담 안내", "cost/")])}</div></div>'
+        write(slug + "index.html", head(title, p["desc"], slug, extra, 2, ld, "article") + full + foot(2))
+        pages.append((slug, lastmod_for(slug, p["html"], fixed=mod), "0.7"))
 
-    # 블로그 목록 (페이지당 30개)
     per = 30
     chunks = [posts[i:i + per] for i in range(0, max(len(posts), 1), per)] or [[]]
     for n, chunk in enumerate(chunks, 1):
         slug = "blog/" if n == 1 else f"blog/page/{n}/"
         depth = 1 if n == 1 else 3
         rel = "../" * depth
-        items = "".join(f'<li><a href="{rel}blog/{q["slug"]}/">{esc(q["title"])}</a> <span class="muted">{q["date"].isoformat()}</span><br><span class="muted">{esc(q["desc"][:90])}</span></li>' for q in chunk) or "<li>첫 글을 준비하고 있습니다.</li>"
+        items = "".join(f'<li><a href="{rel}blog/{q["slug"]}/">{esc(q["title"])}</a><span>{q["date"].isoformat()}</span><p>{esc(q["desc"][:110])}</p></li>' for q in chunk) or "<li>첫 글을 준비하고 있습니다.</li>"
         nav = ""
         if n > 1: nav += f'<a href="{rel}blog/{"" if n == 2 else f"page/{n-1}/"}">← 이전</a> '
         if n < len(chunks): nav += f'<a href="{rel}blog/page/{n+1}/">다음 →</a>'
-        body = f"""<section class="page wrap"><div class="page__grid"><article class="page__main">
-{crumbs(depth, ("블로그", None))}
+        body = f"""{crumbs(depth, ("블로그", None))}
 <h1>과외 블로그</h1>
-<p class="lead">학년별·과목별 과외 이야기와 학부모가 자주 묻는 질문을 매일 올립니다. 글 {len(posts)}개.</p>
-<ul class="plain">{items}</ul>
-<p class="crumbs">{nav}</p>
-</article>
-{aside(depth, [(f'{g["name"]} 과외', f"{gk}/") for gk, g in D.GRADES.items()] + [("화상과외", "online/"), ("방문과외", "visit/"), ("과외 비용", "cost/")])}
-</div></section>"""
-        write(slug + "index.html", head(f"과외 블로그 | 학년별·과목별 과외 안내 | {D.SITE_NAME}", "초중고 과외, 화상과외, 방문과외에 대한 글을 매일 올립니다. 학년별 공부법과 과외 비용, 선생님 고르는 법.", slug, "", depth) + body + foot(depth))
-        pages.append((slug, TODAY, "0.6"))
+<p class="lead">학년별·과목별 공부 고민과 과외 선택에 필요한 정보를 정리합니다. 글 {len(posts)}개.</p>
+<ul class="post-list post-list--full">{items}</ul>
+<p class="crumbs">{nav}</p>"""
+        full = f'<div class="page container"><div class="page__grid"><article class="page__main">{body}</article>{aside(depth, [(f"{g["name"]} 과외", f"{gk}/") for gk, g in D.GRADES.items()] + [("화상과외", "online/"), ("방문과외", "visit/"), ("수업료 상담 안내", "cost/")])}</div></div>'
+        write(slug + "index.html", head(f"과외 블로그 | 학년별·과목별 공부와 과외 선택 안내 | {D.SITE_NAME}", "초중고 과외, 화상과외, 방문과외에 대한 글. 학년별 공부법, 과외 선택 기준, 선생님 고르는 법.", slug, "", depth) + full + foot(depth))
+        pages.append((slug, lastmod_for(slug, items), "0.6"))
 
 # ---------------------------------------------------------------- sitemap / rss / robots
 def build_feeds(posts):
@@ -347,11 +471,13 @@ def build_feeds(posts):
     rss.append("</channel></rss>")
     write("rss.xml", "\n".join(rss))
     write("robots.txt", f"User-agent: *\nAllow: /\nUser-agent: Yeti\nAllow: /\n\nSitemap: {D.SITE_URL}/sitemap.xml\n")
+    LASTMOD_FILE.write_text(json.dumps(LASTMOD, ensure_ascii=False, indent=0, sort_keys=True), encoding="utf-8")
 
 if __name__ == "__main__":
     posts = load_posts()
     build_index(posts)
-    build_keyword_pages()
+    build_keyword_pages(posts)
     build_blog(posts)
     build_feeds(posts)
+    sys.stdout.reconfigure(encoding="utf-8")
     print(f"완료: 페이지 {len(pages)}개 (블로그 글 {len(posts)}개) → {OUT}")
