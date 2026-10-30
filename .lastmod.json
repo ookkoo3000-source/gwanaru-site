@@ -1,11 +1,11 @@
 {
 "": {
-"date": "2026-10-24",
-"hash": "89142ad254059ff48ccc520e45c9e853851fdf2b"
+"date": "2026-10-30",
+"hash": "2efa23571a4b06b8a3e0b63a722c929289c85e7e"
 },
 "blog/": {
-"date": "2026-10-24",
-"hash": "c219f9a49b29f8118cdf552623e04fb559f46d39"
+"date": "2026-10-30",
+"hash": "a48f24372e9655fb30242b4b12d543b714eddebf"
 },
 "blog/2026-10-18-how-to-find-tutor/": {
 "date": "2026-10-24",
@@ -51,6 +51,26 @@
 "date": "2026-10-24",
 "hash": "737d9418a7011668732b82726f22470b84acbafc"
 },
+"blog/2026-10-26-choosing-online-tutoring-service/": {
+"date": "2026-10-30",
+"hash": "55d16f56c9c101fe6ab8fb0fb4af7928c7df94c2"
+},
+"blog/2026-10-27-tutoring-fee-rules/": {
+"date": "2026-10-30",
+"hash": "2494a15f922c58dc89895833028313398f65c0c8"
+},
+"blog/2026-10-28-elementary-english-checklist/": {
+"date": "2026-10-30",
+"hash": "ef6ef0e37a7e217026cce561443288c2d8ad6eb5"
+},
+"blog/2026-10-29-math-essay-deduction/": {
+"date": "2026-10-30",
+"hash": "49701bc8651f34387af1473bcc665973934447ea"
+},
+"blog/2026-10-30-middle3-naesin-boost/": {
+"date": "2026-10-30",
+"hash": "5601289982b673d8f56b0e742826b3e43eaedf77"
+},
 "contact/": {
 "date": "2026-10-24",
 "hash": "8297a6863e5f3cda0b01681c37bd875a4ce85128"
@@ -60,76 +80,76 @@
 "hash": "115a5cca2539bd4e7e3fb44fe114f8a9358cefb6"
 },
 "elementary-english/": {
-"date": "2026-10-24",
-"hash": "21a0fcf53ecaf19bc0211883fe7b868f152196ec"
+"date": "2026-10-30",
+"hash": "049963c438d2ce509856121d1db470ae292ff74b"
 },
 "elementary-korean/": {
-"date": "2026-10-24",
-"hash": "9058790084bedbd3c40c11cabcc982d0ba0d018a"
+"date": "2026-10-30",
+"hash": "3bc59b5c9d2764e64d8a33491e85090f827146ce"
 },
 "elementary-math/": {
-"date": "2026-10-24",
-"hash": "4f8c7da75b57dbc848da8303ac1d6763074afd77"
+"date": "2026-10-30",
+"hash": "85d6f1d1b6e6e5deb50ccc385381692d6ca65f5e"
 },
 "elementary-science/": {
-"date": "2026-10-24",
-"hash": "67cb5a04d43c5a3d12f83239ca1fa3e86ee26fff"
+"date": "2026-10-30",
+"hash": "4710c348c57f93586379f02301a45ecfd70eecc3"
 },
 "elementary-social/": {
-"date": "2026-10-24",
-"hash": "c88785d2b128e63c1b5f1616c3ea519ca28acd90"
+"date": "2026-10-30",
+"hash": "3731a086e953b60ea66540161c6e768d9368e25a"
 },
 "elementary/": {
-"date": "2026-10-24",
-"hash": "888b1b1cac01ca7a055bb4da5e3aab18dc4d9134"
+"date": "2026-10-30",
+"hash": "e43c62f21aef17ce6060b50a4455be8b6a5482ae"
 },
 "high-english/": {
-"date": "2026-10-24",
-"hash": "117c571bff42e4a7c86c219e8edd22bc9bd8ed7d"
+"date": "2026-10-30",
+"hash": "2e41dc3330afa38fa8304a03d37bc80628ea48f6"
 },
 "high-korean/": {
-"date": "2026-10-24",
-"hash": "c7f915ea514d44ba3914222a8b79d763ef96a4c1"
+"date": "2026-10-30",
+"hash": "9abce1348afa7deced8d8c3acb77068dad195d6e"
 },
 "high-math/": {
 "date": "2026-10-24",
 "hash": "5d7f018ea8fc00336df3eba51f19f4774035992e"
 },
 "high-science/": {
-"date": "2026-10-24",
-"hash": "1143b54d7f7a4d9b5148e9faa2bf2bf21f9a1fd8"
+"date": "2026-10-30",
+"hash": "44c969f2990330185a5f38b60e5b9d9b56228e08"
 },
 "high-social/": {
-"date": "2026-10-24",
-"hash": "4b3aba057df7cc1ae7ac83f69aa31e0c91da03ac"
+"date": "2026-10-30",
+"hash": "60562d25cd5de64d5146dc1230c701794a8a07a2"
 },
 "high/": {
-"date": "2026-10-24",
-"hash": "22c30285763bf64f86322ea21ca95bfe0c0b74a6"
+"date": "2026-10-30",
+"hash": "6f1282c0e320894646f9433f4a3cd3e76a6504c8"
 },
 "middle-english/": {
 "date": "2026-10-24",
 "hash": "4670f91f0a67b635d11ec14264076c997baf6a22"
 },
 "middle-korean/": {
-"date": "2026-10-24",
-"hash": "8c8d871cdad214f606a49bb1b9c06eec2359c9e2"
+"date": "2026-10-30",
+"hash": "51695036ba331dd4b3a8c40c3bb85cdcfbeae44d"
 },
 "middle-math/": {
 "date": "2026-10-24",
 "hash": "a69f75465d5e75083568e99741bfd11088b8fcf6"
 },
 "middle-science/": {
-"date": "2026-10-24",
-"hash": "4d553ebe8f7f6cb9c18158b7838276668753595a"
+"date": "2026-10-30",
+"hash": "a5b182342e74db35f6235297c71a5aac4a6f1574"
 },
 "middle-social/": {
-"date": "2026-10-24",
-"hash": "343db64575eb23380c0ebc8afaf07990e44233ad"
+"date": "2026-10-30",
+"hash": "73641845696d63c81d0bf11d7e8a1308988ffa8e"
 },
 "middle/": {
-"date": "2026-10-24",
-"hash": "195a324c525b72a6d18f0c07e29966028191c2d3"
+"date": "2026-10-30",
+"hash": "10d81f75becb39fa5a985511c907ea735cc348c8"
 },
 "online/": {
 "date": "2026-10-24",
