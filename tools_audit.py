@@ -19,7 +19,7 @@ def get(url):
         return None, url, str(e), {}
 
 st, _, sm, _ = get(base + "/sitemap.xml")
-urls = re.findall(r"<loc>(.*?)</loc>", sm)
+urls = [urllib.parse.unquote(x) for x in re.findall(r"<loc>(.*?)</loc>", sm)]   # 키는 디코딩된 형태로 통일
 seen, queue, pages = set(), list(urls), {}
 while queue:
     u = queue.pop(0)
@@ -57,4 +57,4 @@ dup = {}
 for u, r in pages.items():
     if r.get("title"): dup.setdefault(r["title"], []).append(u)
 print("중복 title:", {t: v for t, v in dup.items() if len(v) > 1} or "없음")
-print("canonical 불일치:", [u for u, r in pages.items() if r.get("canonical") and r["canonical"] != u] or "없음")
+print("canonical 불일치:", [u for u, r in pages.items() if r.get("canonical") and urllib.parse.unquote(r["canonical"]) != u] or "없음")
