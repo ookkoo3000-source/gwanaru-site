@@ -8,6 +8,7 @@ base, out = sys.argv[1].rstrip("/"), sys.argv[2]
 UA = {"User-Agent": "Mozilla/5.0 (gwanaru-audit)"}
 
 def get(url):
+    url = urllib.parse.quote(url, safe=":/?&=%#")   # 한글 경로
     req = urllib.request.Request(url, headers=UA)
     try:
         with urllib.request.urlopen(req, timeout=20) as r:
@@ -41,7 +42,7 @@ while queue:
             if href.startswith(("tel:", "sms:", "mailto:", "data:", "javascript:")): continue
             absu = urllib.parse.urljoin(u, href)
             if absu.startswith(base):
-                absu = absu.split("?")[0]
+                absu = urllib.parse.unquote(absu.split("?")[0])
                 links.add(absu)
                 if absu not in seen and absu.endswith(("/", ".html", ".xml", ".txt")): queue.append(absu)
         rec["internal_links"] = sorted(links)

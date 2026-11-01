@@ -38,7 +38,7 @@ for p in files:
         if 'alt="' not in img: problems.append(f"{tag}: alt 없는 이미지 {img[:60]}")
     for href in re.findall(r'(?:href|src|srcset)="([^"]+)"', s):
         if href.startswith(("http", "#", "tel:", "sms:", "mailto:", "data:", "//")): continue
-        href = href.split("#")[0].split("?")[0]
+        href = urllib.parse.unquote(href.split("#")[0].split("?")[0])
         if not href: continue
         target = (ROOT / href.lstrip("/")) if href.startswith("/") else (p.parent / href)
         target = target.resolve()

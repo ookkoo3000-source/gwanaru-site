@@ -387,6 +387,7 @@ def build_keyword_pages(posts):
 # ---------------------------------------------------------------- 지역별 페이지 (data/schools.json)
 def build_area(posts):
     S = json.loads(read("data/schools.json")); regs = S["regions"]; src = S["source"]
+    Q = lambda x: urllib.parse.quote(x, safe="/-_.")   # 한글 슬러그 링크는 퍼센트 인코딩
     by_sido = {}
     for r in regs: by_sido.setdefault((r["sido"], r["sido_short"]), []).append(r)
     subj_links = "".join(f'<li><a href="../../{gk}-{sk}/">{g["name"]} {s["name"]} 과외</a></li>' for gk, g in D.GRADES.items() if gk != "elementary" for sk, s in D.SUBJECTS.items() if sk in ("math", "english", "korean"))
@@ -406,8 +407,8 @@ def build_area(posts):
                 return '<ul class="schools">' + "".join(f'<li>{esc(x["name"])}{" <small>분교</small>" if x["branch"] else ""}<small>{esc(x["type"])}{(" · " + esc(x["dong"])) if x["dong"] else ""}</small></li>' for x in items) + "</ul>"
             dongs = " · ".join(r["dongs"]) if r["dongs"] else ""
             others = sorted((o for o in lst if o is not r), key=lambda o: (o["city"] != r["city"], o["sgg"]))   # 같은 시의 다른 구 먼저
-            siblings = [(f'{(o["city"] + " " + o["gu"]) if o["gu"] else o["sgg"]} 과외', f'area/{o["slug"]}/') for o in others][:10]
-            body = f"""{crumbs(2, ("지역별 과외", "area/"), (sido, f"area/{short}/"), (short_name, None))}
+            siblings = [(f'{(o["city"] + " " + o["gu"]) if o["gu"] else o["sgg"]} 과외', f'area/{Q(o["slug"])}/') for o in others][:10]
+            body = f"""{crumbs(2, ("지역별 과외", "area/"), (sido, f"area/{Q(short)}/"), (short_name, None))}
 <h1>{esc(name)} 수학·영어 과외 <span class="muted">{esc(short)}</span></h1>
 <p class="lead">{esc(sido)} {esc(r["sgg"])}에 있는 중학교 {r["mid"]}곳, 고등학교 {r["high"]}곳 학생의 1:1 과외를 상담합니다. 화상 수업은 지역과 관계없이 가능하고, 방문은 지역·과목·시간대에 따라 상담에서 확인해 드립니다. 상담과 {D.TRIAL}은 무료입니다.</p>
 <h2>{esc(short_name)} 중학교 {r["mid"]}곳</h2>
@@ -421,7 +422,7 @@ def build_area(posts):
 <h2>과목별 수업 안내</h2>
 <ul class="plain">{subj_links}</ul>
 <p>초등학생은 <a href="../../elementary/">초등 과외</a> 안내를, 수업 방식은 <a href="../../online/">화상과외</a>·<a href="../../visit/">방문과외</a> 안내를 참고하세요.</p>"""
-            full = f'<div class="page container"><div class="page__grid"><article class="page__main">{body}</article>{aside(2, siblings + [(f"{sido} 전체", f"area/{short}/"), ("화상과외", "online/"), ("방문과외", "visit/")])}</div></div>'
+            full = f'<div class="page container"><div class="page__grid"><article class="page__main">{body}</article>{aside(2, siblings + [(f"{sido} 전체", f"area/{Q(short)}/"), ("화상과외", "online/"), ("방문과외", "visit/")])}</div></div>'
             write(slug + "index.html", head(title, desc, slug, "", 2) + full + foot(2))
             pages.append((slug, lastmod_for(slug, body), "0.6"))
 
@@ -433,7 +434,7 @@ def build_area(posts):
         li = []
         for r in lst:
             label = f'{r["city"]} {r["gu"]}' if r["gu"] else r["sgg"]
-            li.append(f'<li><a href="../{r["slug"]}/">{esc(label)} 과외</a><span>중 {r["mid"]} · 고 {r["high"]}</span></li>')
+            li.append(f'<li><a href="../{Q(r["slug"])}/">{esc(label)} 과외</a><span>중 {r["mid"]} · 고 {r["high"]}</span></li>')
         title = f'{sido} 지역별 과외 | 시·군·구 {len(lst)}곳, 중·고등학교 {mid + high}곳 | {D.SITE_NAME}'
         desc = f'{sido} {len(lst)}개 시·군·구의 중학교 {mid}곳·고등학교 {high}곳 학생을 위한 1:1 과외 상담. 지역을 고르면 그 지역 학교 목록과 상담 안내를 볼 수 있습니다.'
         body = f"""{crumbs(2, ("지역별 과외", "area/"), (sido, None))}
@@ -442,13 +443,13 @@ def build_area(posts):
 <h2>시·군·구 선택</h2>
 <ul class="post-list area-list">{"".join(li)}</ul>
 {note}"""
-        full = f'<div class="page container"><div class="page__grid"><article class="page__main">{body}</article>{aside(2, [(f"{o[1]} 지역별 과외", f"area/{o[1]}/") for o in by_sido if o[1] != short][:8] + [("화상과외", "online/"), ("방문과외", "visit/")])}</div></div>'
+        full = f'<div class="page container"><div class="page__grid"><article class="page__main">{body}</article>{aside(2, [(f"{o[1]} 지역별 과외", f"area/{Q(o[1])}/") for o in by_sido if o[1] != short][:8] + [("화상과외", "online/"), ("방문과외", "visit/")])}</div></div>'
         write(slug + "index.html", head(title, desc, slug, "", 2) + full + foot(2))
         pages.append((slug, lastmod_for(slug, body), "0.6"))
 
     # 전국 인덱스
     slug = "area/"
-    li = "".join(f'<li><a href="{short}/">{esc(sido)}</a><span>{len(lst)}개 지역 · 중·고 {sum(r["mid"] + r["high"] for r in lst)}곳</span></li>' for (sido, short), lst in by_sido.items())
+    li = "".join(f'<li><a href="{Q(short)}/">{esc(sido)}</a><span>{len(lst)}개 지역 · 중·고 {sum(r["mid"] + r["high"] for r in lst)}곳</span></li>' for (sido, short), lst in by_sido.items())
     total = sum(len(r["schools"]) for r in regs)
     title = f"지역별 과외 안내 | 전국 시·군·구 {len(regs)}곳 중·고등학교 {total}곳 | {D.SITE_NAME}"
     desc = f"전국 {len(regs)}개 시·군·구의 중·고등학교 {total}곳 학생을 위한 1:1 과외 상담 안내. 지역을 고르면 그 지역 학교 목록을 볼 수 있습니다. 화상은 전국, 방문은 상담에서 확인."
