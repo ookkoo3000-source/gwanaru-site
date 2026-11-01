@@ -230,6 +230,12 @@ textarea.field { min-height: 92px; resize: vertical; }
 .subject-list li p { font-size: 15px; color: var(--muted); margin-top: 4px; }
 .post-meta { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
 
+/* 지역 페이지: 학교 목록 */
+.schools { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px 18px; margin: 6px 0 10px; }
+.schools li { padding: 8px 0; border-bottom: 1px dashed var(--line); font-size: 15.5px; color: var(--ink); }
+.schools li small { display: block; color: var(--muted); font-size: 12.5px; }
+.area-list li span { font-size: 13.5px; }
+
 /* blog post body */
 .post { font-size: 17px; line-height: 1.85; }
 .post h2 { font-size: 22px; }

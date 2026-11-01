@@ -31,7 +31,7 @@ for p in files:
     if p.name == "404.html":
         if not noindex: problems.append("404.html: noindex 없음")
     else:
-        if can != f"{D.SITE_URL}/{u}": problems.append(f"{tag}: canonical 불일치 → {can}")
+        if urllib.parse.unquote(can or "") != f"{D.SITE_URL}/{u}": problems.append(f"{tag}: canonical 불일치 → {can}")
         if noindex: problems.append(f"{tag}: noindex 설정됨")
     if "{{" in s: problems.append(f"{tag}: 치환 안 된 플레이스홀더")
     for img in re.findall(r"<img [^>]*>", s):
@@ -53,7 +53,7 @@ for d, v in descs.items():
 sm = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
 locs = re.findall(r"<loc>(.*?)</loc>", sm); mods = re.findall(r"<lastmod>(.*?)</lastmod>", sm)
 for loc in locs:
-    path = loc.replace(D.SITE_URL + "/", "")
+    path = urllib.parse.unquote(loc.replace(D.SITE_URL + "/", ""))
     f = ROOT / path / "index.html" if path == "" or path.endswith("/") else ROOT / path
     if path == "": f = ROOT / "index.html"
     if not f.exists(): problems.append(f"sitemap: 파일 없음 {loc}")
@@ -61,7 +61,7 @@ for mo in mods:
     if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", mo): problems.append(f"sitemap: lastmod 형식 {mo}")
 if len(set(locs)) != len(locs): problems.append("sitemap: 중복 URL")
 indexable = {("/" + rel_url(p)) for p in files if p.name != "404.html"}
-smset = {"/" + l.replace(D.SITE_URL + "/", "") for l in locs}
+smset = {"/" + urllib.parse.unquote(l.replace(D.SITE_URL + "/", "")) for l in locs}
 missing = indexable - smset
 if missing: problems.append(f"sitemap에 없는 페이지: {sorted(missing)}")
 

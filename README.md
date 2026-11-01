@@ -10,6 +10,7 @@
 | `templates/index.html` | 메인 페이지 틀 |
 | `posts/*.md` | **블로그 글**. 파일 하나 = 글 하나 = 개별 페이지 (`posts/README.md` 참고) |
 | `build.py` | 위 세 가지로 모든 페이지, `404.html`, `sitemap.xml`(lastmod는 `.lastmod.json`으로 실제 변경일 관리), `rss.xml`, `robots.txt`를 만듭니다 |
+| `data/schools.json` | 전국 중·고등학교 목록(공공데이터 '전국초중등학교위치표준데이터' 기준). `python -I tools_schools.py <CSV>`로 재생성. 지역 페이지(`area/`)의 원본 |
 | `tools_*.py` | `tools_check_post.py`(블로그 글 스펙 실측), `tools_seo_check.py`(빌드 결과 기술 점검), `tools_audit.py`(라이브 사이트 상태 기록), `tools_images.py`(jpg→webp), `tools_og.py`(og 이미지) |
 | `audit/` | 변경 전 기록(baseline), 과거 URL 조사, 개편 보고서 |
 | `css/`, `js/`, `img/` | 디자인과 스크립트, OG 이미지 |
