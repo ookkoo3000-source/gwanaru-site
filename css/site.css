@@ -236,6 +236,17 @@ textarea.field { min-height: 92px; resize: vertical; }
 .schools li small { display: block; color: var(--muted); font-size: 12.5px; }
 .area-list li span { font-size: 13.5px; }
 
+/* 블로그: 학교별 시험 일정표 */
+.exam-wrap { overflow-x: auto; margin: 16px 0 20px; }
+.exam { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 520px; }
+.exam caption { caption-side: bottom; text-align: left; font-size: 13.5px; color: var(--muted); padding: 10px 0 0; line-height: 1.6; }
+.exam th, .exam td { border-bottom: 1px solid var(--line); padding: 10px 12px; text-align: left; vertical-align: top; }
+.exam thead th { background: var(--paper); color: var(--navy); font-size: 14px; }
+.exam tbody th { font-weight: 700; color: var(--ink); width: 38%; }
+.exam tbody th small { display: block; font-weight: 400; color: var(--muted); font-size: 12.5px; }
+.exam td .muted { font-weight: 400; }
+@media (max-width: 640px) { .exam { min-width: 0; } .exam tbody th { width: 42%; font-size: 14px; } .exam td { font-size: 14px; } }
+
 /* blog post body */
 .post { font-size: 17px; line-height: 1.85; }
 .post h2 { font-size: 22px; }

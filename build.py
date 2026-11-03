@@ -386,6 +386,8 @@ def build_keyword_pages(posts):
 
 # ---------------------------------------------------------------- 지역별 페이지 (data/schools.json)
 def build_area(posts):
+    import shutil
+    if (OUT / "area").exists(): shutil.rmtree(OUT / "area")   # 지역 구분이 바뀌면 옛 페이지가 남지 않게
     S = json.loads(read("data/schools.json")); regs = S["regions"]; src = S["source"]
     Q = lambda x: urllib.parse.quote(x, safe="/-_.")   # 한글 슬러그 링크는 퍼센트 인코딩
     by_sido = {}
@@ -463,6 +465,30 @@ def build_area(posts):
     write(slug + "index.html", head(title, desc, slug, "", 1) + full + foot(1))
     pages.append((slug, lastmod_for(slug, body), "0.7"))
 
+
+# ---------------------------------------------------------------- 블로그 치환: 학교별 시험 일정표 ({{EXAM_TABLE:slug}})
+def exam_table(slug):
+    f = ROOT / "data" / "exam_schedule.json"
+    if not f.exists(): return ""
+    E = json.loads(f.read_text(encoding="utf-8")); r = E["regions"].get(slug)
+    if not r: return ""
+    def fmt(e):
+        a, z = e["start"], e["end"]
+        d1 = f"{int(a[5:7])}월 {int(a[8:])}일"; d2 = f"{int(z[5:7])}월 {int(z[8:])}일" if z != a else ""
+        return f'{esc(e["name"])} <span class="muted">{d1}{(" ~ " + d2) if d2 else ""}</span>'
+    rows = []
+    for sch in r["schools"]:
+        ev = sch["events"]
+        cell = "<br>".join(fmt(e) for e in ev) if ev else '<span class="muted">나이스 학사일정 미등록</span>'
+        rows.append(f'<tr><th scope="row">{esc(sch["name"])}<small>{esc(sch["type"])}{(" · " + esc(sch["dong"])) if sch["dong"] else ""}</small></th><td>{cell}</td></tr>')
+    reg_n = sum(1 for x in r["schools"] if x["events"])
+    frm, to = r["range"]
+    cap = f'{esc(r["sido"])} {esc(r["sgg"])} {esc(r["level"])} {len(r["schools"])}곳의 {int(frm[4:6])}월~{int(to[4:6])}월 시험 관련 학사일정 (나이스 교육정보 개방포털 학사일정, {E["fetched"].get(slug, "")} 조회). 일정을 등록한 학교 {reg_n}곳. 학교 사정으로 바뀔 수 있으니 학교 공지가 우선입니다.'
+    return f'<div class="exam-wrap"><table class="exam"><caption>{cap}</caption><thead><tr><th scope="col">학교</th><th scope="col">시험 일정</th></tr></thead><tbody>{"".join(rows)}</tbody></table></div>'
+
+def expand_shortcodes(html_text):
+    return re.sub(r"\{\{EXAM_TABLE:([^}]+)\}\}", lambda m: exam_table(m.group(1).strip()), html_text)
+
 # ---------------------------------------------------------------- 블로그
 def slugify(s):
     s = re.sub(r"[^\w\-가-힣]+", "-", s.strip().lower()).strip("-")
@@ -483,7 +509,7 @@ def load_posts():
         if isinstance(date, datetime.datetime): date = date.date()
         if isinstance(date, str): date = datetime.date.fromisoformat(date[:10])
         slug = meta.get("slug") or slugify(f.stem)
-        body_html = markdown.markdown(body_md, extensions=["extra", "sane_lists"])
+        body_html = expand_shortcodes(markdown.markdown(body_md, extensions=["extra", "sane_lists"]))
         plain = re.sub(r"<[^>]+>", "", body_html)
         desc = meta.get("description") or re.sub(r"\s+", " ", plain).strip()[:150]
         posts.append({"title": str(meta["title"]), "date": date, "slug": slug, "html": body_html, "desc": desc,
@@ -533,7 +559,8 @@ def build_blog(posts):
 <ul class="post-list post-list--full">{items}</ul>
 <p class="crumbs">{nav}</p>"""
         full = f'<div class="page container"><div class="page__grid"><article class="page__main">{body}</article>{aside(depth, [(f"{g["name"]} 과외", f"{gk}/") for gk, g in D.GRADES.items()] + [("화상과외", "online/"), ("방문과외", "visit/"), ("수업료 상담 안내", "cost/")])}</div></div>'
-        write(slug + "index.html", head(f"과외 블로그 | 학년별·과목별 공부와 과외 선택 안내 | {D.SITE_NAME}", "초중고 과외, 화상과외, 방문과외에 대한 글. 학년별 공부법, 과외 선택 기준, 선생님 고르는 법.", slug, "", depth) + full + foot(depth))
+        pg = f" ({n}페이지)" if n > 1 else ""
+        write(slug + "index.html", head(f"과외 블로그{pg} | 학년별·과목별 공부와 과외 선택 안내 | {D.SITE_NAME}", f"초중고 과외, 화상과외, 방문과외에 대한 글{pg}. 학년별 공부법, 과외 선택 기준, 선생님 고르는 법.", slug, "", depth) + full + foot(depth))
         pages.append((slug, lastmod_for(slug, items), "0.6"))
 
 # ---------------------------------------------------------------- sitemap / rss / robots

@@ -6,6 +6,9 @@ ok_all = True
 for f in sys.argv[1:]:
     t = pathlib.Path(f).read_text(encoding="utf-8")
     m = re.match(r"^---\s*\n(.*?)\n---\s*\n(.*)$", t, re.S); meta, body = m.group(1), m.group(2)
+    if "{{EXAM_TABLE:" in body:   # 빌드 시 삽입되는 학교별 일정표도 본문으로 계산 (실제 게시 내용 기준)
+        sys.path.insert(0, str(pathlib.Path(__file__).parent)); import build as B
+        body = re.sub(r"\{\{EXAM_TABLE:([^}]+)\}\}", lambda mm: B.exam_table(mm.group(1).strip()), body)
     title = re.search(r"^title:\s*(.+)$", meta, re.M).group(1)
     parts = re.split(r"(?=<h2[ >])", body)
     intro, secs = parts[0], parts[1:]
