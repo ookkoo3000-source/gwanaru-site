@@ -94,6 +94,7 @@ if sys.argv[1] == "--neis" and len(sys.argv) > 2 and pathlib.Path(sys.argv[2]).e
             d = dong_by.get((r["name"], pr[0]))
             if d: r["dong_hint"] = d
     print(f"  지번 동 보조: {sum(1 for r in rows if r.get('dong_hint'))}곳")
+rows = [r for r in rows if "가칭" not in r["name"]]   # 개교 전 (가칭) 학교는 목록에서 제외
 parsed = []
 for r in rows:
     p = parse(r["addr"]) or parse(r["addr2"])

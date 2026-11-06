@@ -17,7 +17,7 @@ regs = {r["slug"]: r for r in S["regions"]}
 dst = ROOT / "data" / "exam_schedule.json"
 out = json.loads(dst.read_text(encoding="utf-8")) if dst.exists() else {"fetched": {}, "regions": {}}
 KEEP = re.compile(r"고사|지필|평가")
-DROP = re.compile(r"수행|동아리|평가회|평가원|자기평가|학교평가|교원평가|만족도|진단평가|성취도평가|기초학력|수능|수학능력|원안|통지표|성적|자습|교육활동|연수|발송|채점|이의|검토|모의|영어듣기|듣기평가|학력평가|고사장|감독|봉사|자율|시간표|학력신장")
+DROP = re.compile(r"수행|동아리|평가회|평가원|자기평가|학교평가|교원평가|만족도|진단평가|성취도평가|기초학력|수능|수학능력|원안|통지표|성적|자습|교육활동|연수|발송|채점|이의|검토|모의|영어듣기|듣기평가|학력평가|고사장|감독|봉사|자율|시간표|학력신장|교육과정평가|자체평가|형성평가")
 
 def fetch(school):
     q = urllib.parse.urlencode({"KEY": KEY, "Type": "json", "pIndex": 1, "pSize": 300, "ATPT_OFCDC_SC_CODE": school["office_code"], "SD_SCHUL_CODE": school["code"], "AA_FROM_YMD": frm, "AA_TO_YMD": to})
