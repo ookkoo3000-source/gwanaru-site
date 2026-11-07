@@ -1,7 +1,7 @@
 {
 "": {
-"date": "2026-11-06",
-"hash": "67b5c21002c424d1975ac954493ab608c25ea627"
+"date": "2026-11-07",
+"hash": "66673b3a444c88cba817ad40efb85b34025520af"
 },
 "area/": {
 "date": "2026-11-06",
@@ -1216,8 +1216,8 @@
 "hash": "7bf37e8b723e92b4fd52adaf869cfcc3c77c9828"
 },
 "blog/": {
-"date": "2026-11-06",
-"hash": "e2b267712c1d4e63aba2caf1caae938ff346247c"
+"date": "2026-11-07",
+"hash": "61a28c27f881ba69d5d727583d09d7031d1e1f1d"
 },
 "blog/2026-10-18-how-to-find-tutor/": {
 "date": "2026-10-24",
@@ -1483,13 +1483,53 @@
 "date": "2026-11-06",
 "hash": "1e93eeed757d3cc658a6f24bb65a7c0892280332"
 },
+"blog/2026-11-07-asan-middle-final-exam/": {
+"date": "2026-11-07",
+"hash": "465380c5ff08fa8405e76c2e41e2b5c87e2892e5"
+},
+"blog/2026-11-07-busanjin-middle-final-exam/": {
+"date": "2026-11-07",
+"hash": "1d49434b6eb10867ede84700a79a889bcb21558e"
+},
+"blog/2026-11-07-daedeok-middle-final-exam/": {
+"date": "2026-11-07",
+"hash": "b3d8319b019b6c3a14f6e74ad1e72a5642c4b933"
+},
+"blog/2026-11-07-daegu-bukgu-middle-final-exam/": {
+"date": "2026-11-07",
+"hash": "76bdbfb6441f1f3f1de2d8dd8b20b8403152e1ce"
+},
+"blog/2026-11-07-dobong-middle-final-exam/": {
+"date": "2026-11-07",
+"hash": "f6ebab0f106ac5e805b313a63986e64bfc938927"
+},
+"blog/2026-11-07-dongnae-middle-final-exam/": {
+"date": "2026-11-07",
+"hash": "2b2c5416ab35c94d9fde3160aaf25f06ee18b883"
+},
+"blog/2026-11-07-gwangjin-middle-final-exam/": {
+"date": "2026-11-07",
+"hash": "f73a60ab4a086313e5844d13305236c9b08cde95"
+},
+"blog/2026-11-07-pohang-bukgu-middle-final-exam/": {
+"date": "2026-11-07",
+"hash": "acec51907afe8a21b1b9f4806fbde24de6e91ba6"
+},
+"blog/2026-11-07-seodaemun-middle-final-exam/": {
+"date": "2026-11-07",
+"hash": "c80ee914b8d4f2be2af53928b0a90466d4379ac9"
+},
+"blog/2026-11-07-seongdong-middle-final-exam/": {
+"date": "2026-11-07",
+"hash": "293cc60cda0a6283c5753319f53f1b1d4287bc08"
+},
 "blog/page/2/": {
-"date": "2026-11-06",
-"hash": "cd6b75bd65490d84af6eb90ebbb0a64c9bcbb7d8"
+"date": "2026-11-07",
+"hash": "0964427c1f8495c76b462c7d253a52bf686a4370"
 },
 "blog/page/3/": {
-"date": "2026-11-06",
-"hash": "14bb942e787071509ca4e46e48c3eb66e0838bc8"
+"date": "2026-11-07",
+"hash": "5918cb6bbac18396cd18025c7daf19ac09bf7c33"
 },
 "contact/": {
 "date": "2026-10-24",
@@ -1500,20 +1540,20 @@
 "hash": "115a5cca2539bd4e7e3fb44fe114f8a9358cefb6"
 },
 "elementary-english/": {
-"date": "2026-11-06",
-"hash": "e18cd6e6755eefbed4c1ace83c341e62390546e2"
+"date": "2026-11-07",
+"hash": "342d0cecf6b0b83ba8c91940656c3934fb1d8d79"
 },
 "elementary-korean/": {
-"date": "2026-11-05",
-"hash": "8ae8d834417c7527afab9cbb4044deb0ac3ac834"
+"date": "2026-11-07",
+"hash": "4b8e81bd5ce8f1af1662f7520e11c07627d6ddce"
 },
 "elementary-math/": {
-"date": "2026-11-06",
-"hash": "1b1972c4c41214e653210beebee98bdb8840ea4e"
+"date": "2026-11-07",
+"hash": "4481dcfeca0d7741b014c94ae2e6009be05b3039"
 },
 "elementary-science/": {
-"date": "2026-11-04",
-"hash": "e3aeb8625ac1ab9e92cccd5e748a166eb0d703e1"
+"date": "2026-11-07",
+"hash": "4891c2e6cf139935ff5e9d374634efa8c430f874"
 },
 "elementary-social/": {
 "date": "2026-11-06",
@@ -1524,20 +1564,20 @@
 "hash": "d97857864e914440b13dd7a8adb2ee02eb8ad4a7"
 },
 "high-english/": {
-"date": "2026-11-06",
-"hash": "a3a129d5a017e9b7404184f3cd93d06c7da662b8"
+"date": "2026-11-07",
+"hash": "e2e05a196e54f1036902f42b1395c71c41051f8f"
 },
 "high-korean/": {
-"date": "2026-11-05",
-"hash": "71430f5878e292db7bc6813e6d1528063be57fb4"
+"date": "2026-11-07",
+"hash": "3c874ebefe8acdcde2c74389d2bb9493398fbbec"
 },
 "high-math/": {
 "date": "2026-10-24",
 "hash": "5d7f018ea8fc00336df3eba51f19f4774035992e"
 },
 "high-science/": {
-"date": "2026-11-04",
-"hash": "4319c9323bfbbcaf50047989ddf4a61ad55d9f0d"
+"date": "2026-11-07",
+"hash": "2b753f620d977648cdaee4a3a12f4e377c69f648"
 },
 "high-social/": {
 "date": "2026-11-06",
@@ -1552,24 +1592,24 @@
 "hash": "4670f91f0a67b635d11ec14264076c997baf6a22"
 },
 "middle-korean/": {
-"date": "2026-11-05",
-"hash": "d04d7d66a5dbbff55a6f0e6fa0cac0963d77d1f1"
+"date": "2026-11-07",
+"hash": "e8bc0addbe2f05680db8bb87ec6a4c048609fb64"
 },
 "middle-math/": {
 "date": "2026-10-24",
 "hash": "a69f75465d5e75083568e99741bfd11088b8fcf6"
 },
 "middle-science/": {
-"date": "2026-11-06",
-"hash": "d3c47f752e2a01884be7852d39487938de1dfdc9"
+"date": "2026-11-07",
+"hash": "58dedbe64d7c1c63c72fe73cb57ddb2ec9401f09"
 },
 "middle-social/": {
 "date": "2026-11-06",
 "hash": "5860031b8870d0fbccf1232bb760dac34f1eddf2"
 },
 "middle/": {
-"date": "2026-11-06",
-"hash": "48336f5ffd4d0398e2eb903b8a476eb8b7f17354"
+"date": "2026-11-07",
+"hash": "16a856ae832e23c53379f91699adbcf3dc4e6024"
 },
 "online/": {
 "date": "2026-10-24",

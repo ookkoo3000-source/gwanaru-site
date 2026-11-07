@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://edumegong.co.kr/</loc><lastmod>2026-11-06</lastmod><priority>1.0</priority></url>
-  <url><loc>https://edumegong.co.kr/elementary-math/</loc><lastmod>2026-11-06</lastmod><priority>0.8</priority></url>
-  <url><loc>https://edumegong.co.kr/elementary-english/</loc><lastmod>2026-11-06</lastmod><priority>0.8</priority></url>
-  <url><loc>https://edumegong.co.kr/elementary-korean/</loc><lastmod>2026-11-05</lastmod><priority>0.8</priority></url>
-  <url><loc>https://edumegong.co.kr/elementary-science/</loc><lastmod>2026-11-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://edumegong.co.kr/</loc><lastmod>2026-11-07</lastmod><priority>1.0</priority></url>
+  <url><loc>https://edumegong.co.kr/elementary-math/</loc><lastmod>2026-11-07</lastmod><priority>0.8</priority></url>
+  <url><loc>https://edumegong.co.kr/elementary-english/</loc><lastmod>2026-11-07</lastmod><priority>0.8</priority></url>
+  <url><loc>https://edumegong.co.kr/elementary-korean/</loc><lastmod>2026-11-07</lastmod><priority>0.8</priority></url>
+  <url><loc>https://edumegong.co.kr/elementary-science/</loc><lastmod>2026-11-07</lastmod><priority>0.8</priority></url>
   <url><loc>https://edumegong.co.kr/elementary-social/</loc><lastmod>2026-11-06</lastmod><priority>0.8</priority></url>
   <url><loc>https://edumegong.co.kr/elementary/</loc><lastmod>2026-11-01</lastmod><priority>0.9</priority></url>
   <url><loc>https://edumegong.co.kr/middle-math/</loc><lastmod>2026-10-24</lastmod><priority>0.9</priority></url>
   <url><loc>https://edumegong.co.kr/middle-english/</loc><lastmod>2026-10-24</lastmod><priority>0.9</priority></url>
-  <url><loc>https://edumegong.co.kr/middle-korean/</loc><lastmod>2026-11-05</lastmod><priority>0.8</priority></url>
-  <url><loc>https://edumegong.co.kr/middle-science/</loc><lastmod>2026-11-06</lastmod><priority>0.8</priority></url>
+  <url><loc>https://edumegong.co.kr/middle-korean/</loc><lastmod>2026-11-07</lastmod><priority>0.8</priority></url>
+  <url><loc>https://edumegong.co.kr/middle-science/</loc><lastmod>2026-11-07</lastmod><priority>0.8</priority></url>
   <url><loc>https://edumegong.co.kr/middle-social/</loc><lastmod>2026-11-06</lastmod><priority>0.8</priority></url>
-  <url><loc>https://edumegong.co.kr/middle/</loc><lastmod>2026-11-06</lastmod><priority>0.9</priority></url>
+  <url><loc>https://edumegong.co.kr/middle/</loc><lastmod>2026-11-07</lastmod><priority>0.9</priority></url>
   <url><loc>https://edumegong.co.kr/high-math/</loc><lastmod>2026-10-24</lastmod><priority>0.9</priority></url>
-  <url><loc>https://edumegong.co.kr/high-english/</loc><lastmod>2026-11-06</lastmod><priority>0.8</priority></url>
-  <url><loc>https://edumegong.co.kr/high-korean/</loc><lastmod>2026-11-05</lastmod><priority>0.8</priority></url>
-  <url><loc>https://edumegong.co.kr/high-science/</loc><lastmod>2026-11-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://edumegong.co.kr/high-english/</loc><lastmod>2026-11-07</lastmod><priority>0.8</priority></url>
+  <url><loc>https://edumegong.co.kr/high-korean/</loc><lastmod>2026-11-07</lastmod><priority>0.8</priority></url>
+  <url><loc>https://edumegong.co.kr/high-science/</loc><lastmod>2026-11-07</lastmod><priority>0.8</priority></url>
   <url><loc>https://edumegong.co.kr/high-social/</loc><lastmod>2026-11-06</lastmod><priority>0.8</priority></url>
   <url><loc>https://edumegong.co.kr/high/</loc><lastmod>2026-11-01</lastmod><priority>0.9</priority></url>
   <url><loc>https://edumegong.co.kr/online/</loc><lastmod>2026-10-24</lastmod><priority>0.9</priority></url>
@@ -291,6 +291,16 @@
   <url><loc>https://edumegong.co.kr/area/%EA%B4%91%EC%A3%BC%EC%A0%84%EB%82%A8-%ED%99%94%EC%88%9C%EA%B5%B0/</loc><lastmod>2026-11-06</lastmod><priority>0.6</priority></url>
   <url><loc>https://edumegong.co.kr/area/%EA%B4%91%EC%A3%BC%EC%A0%84%EB%82%A8/</loc><lastmod>2026-11-06</lastmod><priority>0.6</priority></url>
   <url><loc>https://edumegong.co.kr/area/</loc><lastmod>2026-11-06</lastmod><priority>0.7</priority></url>
+  <url><loc>https://edumegong.co.kr/blog/2026-11-07-seongdong-middle-final-exam/</loc><lastmod>2026-11-07</lastmod><priority>0.7</priority></url>
+  <url><loc>https://edumegong.co.kr/blog/2026-11-07-seodaemun-middle-final-exam/</loc><lastmod>2026-11-07</lastmod><priority>0.7</priority></url>
+  <url><loc>https://edumegong.co.kr/blog/2026-11-07-pohang-bukgu-middle-final-exam/</loc><lastmod>2026-11-07</lastmod><priority>0.7</priority></url>
+  <url><loc>https://edumegong.co.kr/blog/2026-11-07-gwangjin-middle-final-exam/</loc><lastmod>2026-11-07</lastmod><priority>0.7</priority></url>
+  <url><loc>https://edumegong.co.kr/blog/2026-11-07-dongnae-middle-final-exam/</loc><lastmod>2026-11-07</lastmod><priority>0.7</priority></url>
+  <url><loc>https://edumegong.co.kr/blog/2026-11-07-dobong-middle-final-exam/</loc><lastmod>2026-11-07</lastmod><priority>0.7</priority></url>
+  <url><loc>https://edumegong.co.kr/blog/2026-11-07-daegu-bukgu-middle-final-exam/</loc><lastmod>2026-11-07</lastmod><priority>0.7</priority></url>
+  <url><loc>https://edumegong.co.kr/blog/2026-11-07-daedeok-middle-final-exam/</loc><lastmod>2026-11-07</lastmod><priority>0.7</priority></url>
+  <url><loc>https://edumegong.co.kr/blog/2026-11-07-busanjin-middle-final-exam/</loc><lastmod>2026-11-07</lastmod><priority>0.7</priority></url>
+  <url><loc>https://edumegong.co.kr/blog/2026-11-07-asan-middle-final-exam/</loc><lastmod>2026-11-07</lastmod><priority>0.7</priority></url>
   <url><loc>https://edumegong.co.kr/blog/2026-11-06-wonju-middle-final-exam/</loc><lastmod>2026-11-06</lastmod><priority>0.7</priority></url>
   <url><loc>https://edumegong.co.kr/blog/2026-11-06-ulsan-junggu-middle-final-exam/</loc><lastmod>2026-11-06</lastmod><priority>0.7</priority></url>
   <url><loc>https://edumegong.co.kr/blog/2026-11-06-jeonju-wansan-middle-final-exam/</loc><lastmod>2026-11-06</lastmod><priority>0.7</priority></url>
@@ -357,7 +367,7 @@
   <url><loc>https://edumegong.co.kr/blog/2026-10-20-high1-naesin-study/</loc><lastmod>2026-10-24</lastmod><priority>0.7</priority></url>
   <url><loc>https://edumegong.co.kr/blog/2026-10-19-online-vs-visit-tutoring/</loc><lastmod>2026-10-24</lastmod><priority>0.7</priority></url>
   <url><loc>https://edumegong.co.kr/blog/2026-10-18-how-to-find-tutor/</loc><lastmod>2026-10-24</lastmod><priority>0.7</priority></url>
-  <url><loc>https://edumegong.co.kr/blog/</loc><lastmod>2026-11-06</lastmod><priority>0.6</priority></url>
-  <url><loc>https://edumegong.co.kr/blog/page/2/</loc><lastmod>2026-11-06</lastmod><priority>0.6</priority></url>
-  <url><loc>https://edumegong.co.kr/blog/page/3/</loc><lastmod>2026-11-06</lastmod><priority>0.6</priority></url>
+  <url><loc>https://edumegong.co.kr/blog/</loc><lastmod>2026-11-07</lastmod><priority>0.6</priority></url>
+  <url><loc>https://edumegong.co.kr/blog/page/2/</loc><lastmod>2026-11-07</lastmod><priority>0.6</priority></url>
+  <url><loc>https://edumegong.co.kr/blog/page/3/</loc><lastmod>2026-11-07</lastmod><priority>0.6</priority></url>
 </urlset>
