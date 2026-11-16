@@ -53,16 +53,24 @@ def analytics():
     return f"""<script async src="https://www.googletagmanager.com/gtag/js?id={D.GA_ID}"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments)}}gtag('js',new Date());gtag('config','{D.GA_ID}',{{anonymize_ip:true}});</script>"""
 
+CHAT_ON = bool(getattr(D, "CHANNEL_KEY", ""))
+CHAT_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.4 3.3A.75.75 0 0 1 4.4 18.7V16A2.5 2.5 0 0 1 4 13.5v-8Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>'
+
+def chat_btn(cls="btn btn--line", label="실시간 상담하기", icon=False):
+    """채널톡 메신저를 여는 버튼. 키가 없으면 빈 문자열."""
+    if not CHAT_ON: return ""
+    return f'<button type="button" class="{cls}" data-chat data-track="chat_click">{CHAT_ICON if icon else ""}<span>{esc(label)}</span></button>'
+
 def chat_widget(rel=""):
-    """채널톡 실시간 상담. 기본 버튼은 숨기고 사이트 디자인에 맞춘 버튼(data-chat)으로 엽니다. 키가 없으면 아무것도 넣지 않습니다."""
-    if not getattr(D, "CHANNEL_KEY", ""): return ""
-    return f"""<button type="button" class="chat-fab" data-chat data-track="chat_click" aria-label="실시간 상담 열기">
-  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.4 3.3A.75.75 0 0 1 4.4 18.7V16A2.5 2.5 0 0 1 4 13.5v-8Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span>실시간 상담</span>
-</button>
+    """채널톡 실시간 상담. 기본 버튼은 숨기고 사이트 디자인에 맞춘 버튼(data-chat)으로 엽니다. 키가 없으면 아무것도 넣지 않습니다.
+    /chat/ 페이지(#chat-page)에서는 들어오자마자 메신저를 엽니다."""
+    if not CHAT_ON: return ""
+    return f"""{chat_btn("chat-fab", "실시간 상담", icon=True)}
 <script>
 (function(){{var w=window;if(w.ChannelIO){{return;}}var ch=function(){{ch.c(arguments);}};ch.q=[];ch.c=function(a){{ch.q.push(a);}};w.ChannelIO=ch;function l(){{if(w.ChannelIOInitialized){{return;}}w.ChannelIOInitialized=true;var s=document.createElement("script");s.type="text/javascript";s.async=true;s.src="https://cdn.channel.io/plugin/ch-plugin-web.js";var x=document.getElementsByTagName("script")[0];if(x.parentNode){{x.parentNode.insertBefore(s,x);}}}}if(document.readyState==="complete"){{l();}}else{{w.addEventListener("DOMContentLoaded",l);w.addEventListener("load",l);}}}})();
 ChannelIO('boot', {{"pluginKey": "{D.CHANNEL_KEY}", "hideChannelButtonOnBoot": true}});
 document.addEventListener('click', function(e){{var b=e.target.closest('[data-chat]');if(b){{e.preventDefault();ChannelIO('showMessenger');}}}});
+if(document.getElementById('chat-page')){{ChannelIO('showMessenger');}}
 </script>"""
 
 def verify_tags():
@@ -112,11 +120,11 @@ def head(title, desc, path, extra="", depth=1, jsonld=None, og_type="website"):
 <main id="main">
 """
 
-NAV = [("초등", "elementary/"), ("중등", "middle/"), ("고등", "high/"), ("화상과외", "online/"), ("방문과외", "visit/"), ("지역별", "area/"), ("수업료 안내", "cost/"), ("블로그", "blog/")]
+NAV = [("초등", "elementary/"), ("중등", "middle/"), ("고등", "high/"), ("화상과외", "online/"), ("방문과외", "visit/"), ("지역별", "area/"), ("수업료 안내", "cost/"), ("블로그", "blog/")] + ([("실시간 상담", "chat/")] if CHAT_ON else [])
 
 def header(rel=""):
     home = rel or "./"
-    links = "".join(f'<a href="{rel}{h}">{esc(t)}</a>' for t, h in NAV)
+    links = "".join(f'<a href="{rel}{h}"{" class=\"gnb__chat\"" if h == "chat/" else ""}>{esc(t)}</a>' for t, h in NAV)
     return f"""<header class="site-head">
   <div class="container site-head__in">
     <a class="logo" href="{home}">{LOGO_MARK}<span>{D.SITE_NAME}</span></a>
@@ -142,14 +150,14 @@ def footer(rel=""):
     </div>
     <div class="site-foot__cols">
       <div><h2>학년별</h2><ul>{grades}</ul></div>
-      <div><h2>안내</h2><ul><li><a href="{rel}online/">화상과외</a></li><li><a href="{rel}visit/">방문과외</a></li><li><a href="{rel}area/">지역별 과외 안내</a></li><li><a href="{rel}cost/">수업료 상담 안내</a></li><li><a href="{rel}contact/">상담 신청</a></li></ul></div>
+      <div><h2>안내</h2><ul><li><a href="{rel}online/">화상과외</a></li><li><a href="{rel}visit/">방문과외</a></li><li><a href="{rel}area/">지역별 과외 안내</a></li><li><a href="{rel}cost/">수업료 상담 안내</a></li><li><a href="{rel}contact/">상담 신청</a></li>{'<li><a href="' + rel + 'chat/">실시간 상담</a></li>' if CHAT_ON else ''}</ul></div>
       <div><h2>읽을거리</h2><ul><li><a href="{rel}blog/">블로그</a></li><li><a href="{rel}rss.xml">RSS</a></li><li><a href="{rel}sitemap.xml">사이트맵</a></li></ul></div>
     </div>
   </div>
   <div class="container site-foot__bottom">© 2026 {D.SITE_NAME}</div>
 </footer>
 <div class="quickbar{' quickbar--chat' if getattr(D, 'CHANNEL_KEY', '') else ''}" id="quickbar">
-  <a href="tel:{D.PHONE_RAW}" data-track="tel_click">전화 상담</a>{'<a href="#" data-chat data-track="chat_click">실시간 상담</a>' if getattr(D, 'CHANNEL_KEY', '') else ''}
+  <a href="tel:{D.PHONE_RAW}" data-track="tel_click">전화 상담</a>{'<a class="quickbar__chat" href="' + rel + 'chat/" data-chat data-track="chat_click">실시간 상담</a>' if CHAT_ON else ''}
   <a class="quickbar__main" href="{rel}contact/">무료 체험 상담 신청</a>
 </div>
 {chat_widget(rel)}
@@ -248,6 +256,7 @@ def cta_box(rel="", title="상담 신청", lead=None):
   </div>
   <div class="cta-box__actions">
     <a class="btn btn--primary btn--lg" href="{rel}contact/">무료 체험 상담하기</a>
+    {chat_btn("btn btn--chat btn--lg", "실시간 상담하기", icon=True)}
     <a class="btn btn--line btn--lg" href="tel:{D.PHONE_RAW}" data-track="tel_click">전화 상담하기</a>
   </div>
 </section>"""
@@ -260,6 +269,7 @@ def aside(depth=1, links=()):
     <h2>무료 체험 상담</h2>
     <p>학년, 과목, 지금 어려운 부분을 알려주시면 조건에 맞는 선생님을 안내해 드립니다.</p>
     <a class="btn btn--primary" href="{rel}contact/">상담 신청하기</a>
+    {chat_btn("btn btn--chat", "실시간 상담하기", icon=True)}
     <a class="btn btn--ghost" href="tel:{D.PHONE_RAW}" data-track="tel_click">전화 {D.PHONE}</a>
   </div>
   <nav class="aside-links" aria-label="함께 보기">
@@ -383,6 +393,34 @@ def build_keyword_pages(posts):
     body = service_page(slug, f"상담 신청 | 초중고 1:1 과외 {D.TRIAL} | {D.SITE_NAME}", f"초·중·고 1:1 과외 무료 체험 상담 신청. 연락처, 학년, 희망 과목, 방문·화상만 남기시면 확인 후 연락드립니다. 전화 {D.PHONE}", "\n".join(b),
                         [(f'{o["name"]} 과외', f"{ok}/") for ok, o in D.GRADES.items()] + [("화상과외", "online/"), ("방문과외", "visit/"), ("수업료 상담 안내", "cost/")], 1)
     pages.append((slug, lastmod_for(slug, body), "0.8"))
+
+    # 실시간 상담 페이지(채널톡). 들어오면 메신저가 열리고, 안 열리면 큰 버튼과 다른 연락 방법을 안내
+    if CHAT_ON:
+        slug = "chat/"
+        faq = [("실시간 상담에서 무엇을 물어볼 수 있나요?", "학년과 과목, 지금 막히는 부분, 방문·화상 중 어느 쪽이 맞을지, 선생님 안내 절차와 체험 수업 진행 방법 등 과외 시작 전에 궁금한 것은 모두 물어보실 수 있습니다. 특정 선생님을 지정하거나 수업을 바로 확정하는 창구는 아니고, 상담 뒤 조건에 맞는 선생님을 안내해 드립니다."),
+               ("바로 답이 오나요?", "상담 가능한 시간에는 채팅으로 바로 답변드립니다. 바로 답변이 어려운 시간에 남기신 메시지도 사라지지 않고 그대로 남아 있어, 확인 후 순서대로 답변드립니다. 급하시면 전화 " + D.PHONE + "로 연락 주세요."),
+               ("수업료도 채팅으로 알 수 있나요?", D.PRICE_NOTE + " 채팅에서 학년·과목·희망 시간을 알려주시면 상담을 통해 안내해 드립니다."),
+               ("채팅창이 안 열리면 어떻게 하나요?", "광고 차단 프로그램이나 회사·학교 네트워크에서 채팅 스크립트가 막히는 경우가 있습니다. 이때는 이 페이지의 전화·문자 버튼이나 상담 신청서를 이용해 주세요. 어느 쪽으로 남기셔도 같은 담당자가 확인합니다.")]
+        steps = [("1. 채팅창에서 학년·과목을 남깁니다", "예: “중2 수학, 함수 단원부터 막혀요” 처럼 한 줄이면 충분합니다. 이름이나 자세한 개인정보는 처음부터 남기지 않으셔도 됩니다."),
+                 ("2. 방문·화상과 희망 시간을 정합니다", "아이 성향과 집중 시간, 사는 지역(방문 희망 시)을 여쭤보고 어느 방식이 맞을지 함께 정합니다. 바로 정하기 어려우면 ‘상담 후 결정’으로 두셔도 됩니다."),
+                 ("3. 조건에 맞는 선생님을 안내합니다", "채팅에서 확인한 조건으로 선생님을 안내해 드리고, " + D.TRIAL + " 뒤에 계속할지 정하시면 됩니다. 상담과 체험 수업에는 비용이 없습니다.")]
+        ask = "".join(f"<li>{esc(x)}</li>" for x in ["학년과 학교, 과목", "최근 시험 결과나 지금 막히는 단원", "학원·학습지 병행 여부", "희망 요일과 시간대", "방문·화상 선호(방문이면 지역)", "아이 성향"])
+        b = [crumbs(1, ("실시간 상담", None)), '<div id="chat-page">', "<h1>실시간 상담</h1>",
+             f'<p class="lead">궁금한 것을 채팅으로 바로 물어보세요. 학년, 과목, 지금 어려운 부분만 알려주시면 조건에 맞는 선생님을 안내해 드립니다. 상담과 {D.TRIAL}은 무료입니다.</p>',
+             f"""<section class="chat-hero" aria-labelledby="chat-hero-h">
+  <h2 id="chat-hero-h">지금 바로 채팅 상담</h2>
+  <p>아래 버튼을 누르면 화면 오른쪽 아래에 채팅창이 열립니다. 이 페이지에 들어오면 채팅창이 자동으로 열리기도 합니다.</p>
+  {chat_btn("btn btn--chat btn--xl", "채팅 상담 시작하기", icon=True)}
+  <p class="chat-hero__alt">채팅창이 열리지 않으면 전화 <a href="tel:{D.PHONE_RAW}" data-track="tel_click">{D.PHONE}</a> · <a href="sms:{D.PHONE_RAW}?body={html.escape('과외 상담 신청합니다. 학년/과목/지역: ')}" data-track="sms_click">문자 보내기</a> · <a href="../contact/">상담 신청서</a></p>
+</section>""",
+             "<h2>이렇게 진행됩니다</h2>" + "".join(f"<h3>{esc(h)}</h3><p>{esc(t)}</p>" for h, t in steps),
+             "<h2>이런 분께 맞습니다</h2><ul class=\"plain\">" + "".join(f"<li>{esc(x)}</li>" for x in ["전화 통화가 어려운 시간에 짧게 물어보고 싶은 분", "신청서를 쓰기 전에 방문·화상 중 어느 쪽이 맞을지 먼저 확인하고 싶은 분", "학년·과목만 정해졌고 나머지는 상담하며 정하고 싶은 분", "아이가 직접 수업 방식이나 선생님에 대해 묻고 싶어 하는 경우"]) + "</ul>",
+             f'<h2>상담에서 여쭤보는 것</h2><p>미리 생각해 두시면 상담이 빨라집니다.</p><ul class="plain">{ask}</ul>',
+             "<h2>실시간 상담 자주 묻는 질문</h2>" + faq_html(faq),
+             "</div>"]
+        body = service_page(slug, f"실시간 상담 | 초중고 1:1 과외 채팅 상담, {D.TRIAL} | {D.SITE_NAME}", f"초·중·고 1:1 과외 실시간 채팅 상담. 학년, 과목, 지금 어려운 부분을 남기시면 방문·화상 선택부터 선생님 안내까지 바로 상담합니다. 상담과 체험 수업은 무료, 전화 {D.PHONE}", "\n".join(b),
+                            [("상담 신청서", "contact/")] + [(f'{o["name"]} 과외', f"{ok}/") for ok, o in D.GRADES.items()] + [("화상과외", "online/"), ("방문과외", "visit/"), ("수업료 상담 안내", "cost/")], 1, faq_ld(faq))
+        pages.append((slug, lastmod_for(slug, body), "0.8"))
 
     # 404 (GitHub Pages가 자동 사용). 과거 도메인 주소로 들어온 방문자 안내용 — 색인 제외
     nf = f"""<div class="page container"><div class="page__grid"><article class="page__main">

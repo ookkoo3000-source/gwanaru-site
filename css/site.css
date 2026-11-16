@@ -59,6 +59,14 @@ small { font-size: .85em; }
 .btn--line:hover { border-color: var(--navy); }
 .btn--ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,.45); }
 .btn--ghost:hover { background: rgba(255,255,255,.1); }
+.btn--chat { background: var(--navy); color: #fff; border-color: var(--navy); }
+.btn--chat:hover { background: var(--navy-2); border-color: var(--navy-2); }
+.btn--chat svg { width: 20px; height: 20px; flex: none; }
+.btn--xl { min-height: 64px; padding: 0 36px; font-size: 19px; border-radius: 12px; }
+.aside-card .btn--chat { background: #fff; color: var(--navy); border-color: #fff; }
+.aside-card .btn--chat:hover { background: var(--teal-soft); border-color: var(--teal-soft); }
+.gnb .gnb__chat { color: var(--teal-dark); background: var(--teal-soft); font-weight: 700; margin-left: 4px; }
+.gnb .gnb__chat:hover { background: var(--teal); color: #fff; }
 .btn[disabled] { opacity: .6; cursor: progress; }
 
 /* ---------- header ---------- */
@@ -210,9 +218,19 @@ textarea.field { min-height: 92px; resize: vertical; }
 .quickbar { display: none; }
 
 /* ---------- 실시간 상담(채널톡) 버튼: 데스크톱은 오른쪽 아래 고정, 모바일은 하단 바 안에 ---------- */
-.chat-fab { position: fixed; right: 22px; bottom: 22px; z-index: 70; display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px 12px 14px; border: 0; border-radius: 999px; background: var(--navy); color: #fff; font-weight: 800; font-size: 15px; letter-spacing: -.01em; cursor: pointer; box-shadow: 0 6px 20px rgba(16, 36, 58, .28); transition: background .15s, transform .15s; }
-.chat-fab svg { width: 22px; height: 22px; flex: none; }
-.chat-fab:hover { background: var(--teal-dark); transform: translateY(-1px); }
+.chat-fab { position: fixed; right: 26px; bottom: 26px; z-index: 70; display: inline-flex; align-items: center; gap: 10px; padding: 15px 24px 15px 18px; border: 2px solid #fff; border-radius: 999px; background: var(--teal); color: #fff; font-weight: 800; font-size: 17px; letter-spacing: -.01em; cursor: pointer; box-shadow: 0 10px 28px rgba(15, 124, 116, .42), 0 2px 6px rgba(16, 36, 58, .2); transition: background .15s, transform .15s; }
+.chat-fab svg { width: 26px; height: 26px; flex: none; }
+.chat-fab:hover { background: var(--navy); transform: translateY(-2px); }
+
+/* 실시간 상담 전용 페이지 */
+.chat-hero { margin: 24px 0 36px; padding: 36px 28px; border-radius: 16px; background: var(--navy); color: #d9e2ea; text-align: center; display: grid; gap: 14px; justify-items: center; }
+.chat-hero h2 { color: #fff; font-size: 24px; margin: 0; padding: 0; border: 0; }
+.chat-hero p { font-size: 16px; max-width: 560px; }
+.chat-hero .btn--chat { background: var(--teal); border-color: var(--teal); margin-top: 6px; }
+.chat-hero .btn--chat:hover { background: #fff; color: var(--navy); border-color: #fff; }
+.chat-hero__alt { font-size: 14.5px; color: #9fb3c3; }
+.chat-hero__alt a { color: #fff; text-decoration: underline; text-underline-offset: .15em; }
+#chat-page h3 { font-size: 18px; margin: 22px 0 8px; }
 
 /* ---------- sub pages ---------- */
 .page { padding: 40px 20px 88px; }
@@ -332,9 +350,12 @@ textarea.field { min-height: 92px; resize: vertical; }
   .quickbar a { display: grid; place-items: center; font-weight: 800; font-size: 15.5px; color: var(--navy); }
   .quickbar .quickbar__main { background: var(--teal); color: #fff; }
   .quickbar.is-hidden { transform: translateY(100%); }
-  .quickbar--chat { grid-template-columns: 1fr 1fr 1.5fr; }
-  .quickbar--chat a { font-size: 14.5px; }
+  .quickbar--chat { grid-template-columns: 1fr 1.2fr 1.4fr; }
+  .quickbar--chat a { font-size: 15px; }
+  .quickbar .quickbar__chat { background: var(--navy); color: #fff; }
   .chat-fab { display: none; }
+  .chat-hero { padding: 28px 18px; }
+  .chat-hero .btn--xl { width: 100%; }
   .apply, .apply__done { margin-bottom: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
