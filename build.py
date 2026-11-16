@@ -310,6 +310,7 @@ def build_index(posts):
            "{{TAGLINE}}": esc(D.TAGLINE).replace("\n", "<br>"), "{{TAGLINE_SUB}}": esc(D.TAGLINE_SUB).replace("\n", "<br> "), "{{PHONE}}": D.PHONE, "{{PHONE_RAW}}": D.PHONE_RAW,
            "{{TRIAL}}": D.TRIAL, "{{PRICE_NOTE}}": esc(D.PRICE_NOTE), "{{VERIFY}}": verify_tags(), "{{FONTS}}": FONTS, "{{FAVICON}}": FAVICON, "{{ANALYTICS}}": analytics(),
            "{{HERO_PIC}}": picture("img/hero", 1500, 1000, "책상에서 선생님과 학생이 수학 문제집을 함께 보며 풀이하는 1:1 수업 장면", lazy=False),
+           "{{CHAT_BTN}}": chat_btn("btn btn--chat btn--lg", "실시간 상담하기", icon=True),
            "{{FIND}}": find, "{{CONCERNS}}": concerns, "{{HOW}}": how, "{{TEACHER}}": teacher, "{{STEPS}}": steps,
            "{{LATEST_POSTS}}": latest, "{{FAQ}}": faq_html(D.FAQ), "{{FORM}}": form_html("", D.SITE_URL + "/#apply"),
            "{{LD}}": "".join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>' for x in [ORG_LD, faq_ld(D.FAQ)])}
