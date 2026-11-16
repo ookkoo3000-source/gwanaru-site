@@ -88,6 +88,44 @@
   <a href="tel:01031315305" data-track="tel_click">전화 상담</a><a class="quickbar__chat" href="../chat/" data-chat data-track="chat_click">실시간 상담</a>
   <a class="quickbar__main" href="../contact/">무료 체험 상담 신청</a>
 </div>
+<div class="q-modal" id="qModal" data-auto="0" aria-hidden="true">
+  <form class="quick" role="dialog" aria-modal="true" aria-labelledby="q-title" action="https://formsubmit.co/ajax/ookkoo12@naver.com" method="post" novalidate>
+    <input type="hidden" name="_subject" value="[과외나루] 상담 신청 (빠른 신청)">
+    <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="신청경로" value="팝업">
+    <input type="hidden" name="과목" class="q-in-sub">
+    <input type="hidden" name="학년" class="q-in-grade">
+    <input type="hidden" name="방식" class="q-in-mode">
+    <p class="hp" aria-hidden="true"><label>이 칸은 비워 두세요<input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></p>
+    <button type="button" class="q-close" aria-label="닫기">✕</button>
+    <div class="q-step q-s1 on">
+      <span class="q-badge">무료 체험 수업 무료</span>
+      <div class="q-title" id="q-title">어떤 과목이 고민이세요?<small>과목을 고르시면 확인 후 상담 연락을 드립니다.</small></div>
+      <div class="q-tiles"><button type="button" data-s="수학" data-h="연산·개념·서술형"><b>수학</b><i>연산·개념·서술형</i></button><button type="button" data-s="영어" data-h="단어·문법·독해"><b>영어</b><i>단어·문법·독해</i></button><button type="button" data-s="국어" data-h="문학·비문학·문법"><b>국어</b><i>문학·비문학·문법</i></button><button type="button" data-s="과학" data-h="개념·실험·계산"><b>과학</b><i>개념·실험·계산</i></button><button type="button" data-s="사회" data-h="역사·지리·자료 해석"><b>사회</b><i>역사·지리·자료 해석</i></button><button type="button" data-s="여러 과목·미정" data-h="상담하며 정하기"><b>여러 과목·미정</b><i>상담하며 정하기</i></button></div>
+      <div class="q-alt"><a href="tel:01031315305" data-track="tel_click">전화 010-3131-5305</a><button type="button" data-chat data-track="chat_click">실시간 상담</button></div>
+    </div>
+    <div class="q-step q-s2">
+      <button type="button" class="q-back">← 다시 고르기</button>
+      <div class="q-chosen"></div><div class="q-hint"></div>
+      <span class="q-lbl">학년 <b>*</b></span>
+      <div class="q-chips q-grades"><button type="button">초1~3</button><button type="button">초4~6</button><button type="button">중1</button><button type="button">중2</button><button type="button">중3</button><button type="button">고1</button><button type="button">고2</button><button type="button">고3</button></div>
+      <span class="q-lbl">수업 방식 <small>(선택)</small></span>
+      <div class="q-chips q-modes"><button type="button">방문</button><button type="button">화상</button><button type="button">상담 후 결정</button></div>
+      <label class="q-lbl" for="q-phone">연락처 <b>*</b></label>
+      <input type="tel" id="q-phone" name="연락처" inputmode="tel" autocomplete="tel" placeholder="010-0000-0000" required>
+      <label class="q-agree"><input type="checkbox" name="개인정보동의" value="동의" required> <span>개인정보 수집·이용에 동의합니다. <b>*</b> <small>수집 항목: 연락처, 학년, 과목, 수업 방식 · 목적: 과외 상담 연락</small></span></label>
+      <p class="q-error" role="alert" hidden></p>
+      <button type="submit" class="q-submit">무료 체험 수업 신청하기</button>
+      <p class="q-note">상담과 체험 수업에는 비용이 없습니다. 수업료는 상담을 통해 안내해 드립니다.</p>
+    </div>
+    <div class="q-step q-s3" tabindex="-1">
+      <div class="q-title">신청이 접수되었습니다<small>남겨 주신 연락처로 확인 후 연락드리겠습니다. 급하시면 <a href="tel:01031315305" data-track="tel_click">010-3131-5305</a>로 전화 주세요.</small></div>
+      <button type="button" class="btn btn--primary q-done-close">닫기</button>
+    </div>
+  </form>
+</div>
+<button type="button" class="q-fab" id="qFab">무료 체험 수업 신청</button>
 <button type="button" class="chat-fab" data-chat data-track="chat_click"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.4 3.3A.75.75 0 0 1 4.4 18.7V16A2.5 2.5 0 0 1 4 13.5v-8Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span>실시간 상담</span></button>
 <script>
 (function(){var w=window;if(w.ChannelIO){return;}var ch=function(){ch.c(arguments);};ch.q=[];ch.c=function(a){ch.q.push(a);};w.ChannelIO=ch;function l(){if(w.ChannelIOInitialized){return;}w.ChannelIOInitialized=true;var s=document.createElement("script");s.type="text/javascript";s.async=true;s.src="https://cdn.channel.io/plugin/ch-plugin-web.js";var x=document.getElementsByTagName("script")[0];if(x.parentNode){x.parentNode.insertBefore(s,x);}}if(document.readyState==="complete"){l();}else{w.addEventListener("DOMContentLoaded",l);w.addEventListener("load",l);}})();

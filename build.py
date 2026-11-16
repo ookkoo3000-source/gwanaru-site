@@ -137,7 +137,55 @@ def header(rel=""):
   </div>
 </header>"""
 
-def footer(rel=""):
+QUICK_TILES = [("수학", "연산·개념·서술형"), ("영어", "단어·문법·독해"), ("국어", "문학·비문학·문법"), ("과학", "개념·실험·계산"), ("사회", "역사·지리·자료 해석"), ("여러 과목·미정", "상담하며 정하기")]
+QUICK_GRADES = ["초1~3", "초4~6", "중1", "중2", "중3", "고1", "고2", "고3"]
+
+def quick_modal(rel="", auto=True):
+    """들어오자마자(세션당 1회) 전면에 뜨는 2단계 빠른 상담 신청 팝업 + 다시 여는 버튼. 전송은 메인 신청서와 같은 FormSubmit AJAX."""
+    tiles = "".join(f'<button type="button" data-s="{esc(s)}" data-h="{esc(h)}"><b>{esc(s)}</b><i>{esc(h)}</i></button>' for s, h in QUICK_TILES)
+    grades = "".join(f'<button type="button">{g}</button>' for g in QUICK_GRADES)
+    modes = "".join(f'<button type="button">{m}</button>' for m in ["방문", "화상", "상담 후 결정"])
+    chat = f'<button type="button" data-chat data-track="chat_click">실시간 상담</button>' if CHAT_ON else f'<a href="sms:{D.PHONE_RAW}?body={html.escape("과외 상담 신청합니다. 학년/과목/지역: ")}" data-track="sms_click">문자 보내기</a>'
+    return f"""<div class="q-modal" id="qModal" data-auto="{'1' if auto else '0'}" aria-hidden="true">
+  <form class="quick" role="dialog" aria-modal="true" aria-labelledby="q-title" action="{D.FORM_ENDPOINT}" method="post" novalidate>
+    <input type="hidden" name="_subject" value="{D.FORM_SUBJECT} (빠른 신청)">
+    <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="신청경로" value="팝업">
+    <input type="hidden" name="과목" class="q-in-sub">
+    <input type="hidden" name="학년" class="q-in-grade">
+    <input type="hidden" name="방식" class="q-in-mode">
+    <p class="hp" aria-hidden="true"><label>이 칸은 비워 두세요<input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></p>
+    <button type="button" class="q-close" aria-label="닫기">✕</button>
+    <div class="q-step q-s1 on">
+      <span class="q-badge">{D.TRIAL} 무료</span>
+      <div class="q-title" id="q-title">어떤 과목이 고민이세요?<small>과목을 고르시면 확인 후 상담 연락을 드립니다.</small></div>
+      <div class="q-tiles">{tiles}</div>
+      <div class="q-alt"><a href="tel:{D.PHONE_RAW}" data-track="tel_click">전화 {D.PHONE}</a>{chat}</div>
+    </div>
+    <div class="q-step q-s2">
+      <button type="button" class="q-back">← 다시 고르기</button>
+      <div class="q-chosen"></div><div class="q-hint"></div>
+      <span class="q-lbl">학년 <b>*</b></span>
+      <div class="q-chips q-grades">{grades}</div>
+      <span class="q-lbl">수업 방식 <small>(선택)</small></span>
+      <div class="q-chips q-modes">{modes}</div>
+      <label class="q-lbl" for="q-phone">연락처 <b>*</b></label>
+      <input type="tel" id="q-phone" name="연락처" inputmode="tel" autocomplete="tel" placeholder="010-0000-0000" required>
+      <label class="q-agree"><input type="checkbox" name="개인정보동의" value="동의" required> <span>개인정보 수집·이용에 동의합니다. <b>*</b> <small>수집 항목: 연락처, 학년, 과목, 수업 방식 · 목적: 과외 상담 연락</small></span></label>
+      <p class="q-error" role="alert" hidden></p>
+      <button type="submit" class="q-submit">{D.TRIAL} 신청하기</button>
+      <p class="q-note">상담과 체험 수업에는 비용이 없습니다. 수업료는 상담을 통해 안내해 드립니다.</p>
+    </div>
+    <div class="q-step q-s3" tabindex="-1">
+      <div class="q-title">신청이 접수되었습니다<small>남겨 주신 연락처로 확인 후 연락드리겠습니다. 급하시면 <a href="tel:{D.PHONE_RAW}" data-track="tel_click">{D.PHONE}</a>로 전화 주세요.</small></div>
+      <button type="button" class="btn btn--primary q-done-close">닫기</button>
+    </div>
+  </form>
+</div>
+<button type="button" class="q-fab" id="qFab">{D.TRIAL} 신청</button>"""
+
+def footer(rel="", auto_quick=True):
     home = rel or "./"
     grades = "".join(f'<li><a href="{rel}{gk}/">{g["name"]} 과외</a></li>' for gk, g in D.GRADES.items())
     return f"""</main>
@@ -160,14 +208,15 @@ def footer(rel=""):
   <a href="tel:{D.PHONE_RAW}" data-track="tel_click">전화 상담</a>{'<a class="quickbar__chat" href="' + rel + 'chat/" data-chat data-track="chat_click">실시간 상담</a>' if CHAT_ON else ''}
   <a class="quickbar__main" href="{rel}contact/">무료 체험 상담 신청</a>
 </div>
+{quick_modal(rel, auto_quick)}
 {chat_widget(rel)}
 <script src="{rel}js/site.js" defer></script>
 </body>
 </html>
 """
 
-def foot(depth=1):
-    return footer("../" * depth)
+def foot(depth=1, auto_quick=True):
+    return footer("../" * depth, auto_quick)
 
 def faq_html(items):
     return '<div class="faq">' + "\n".join(f'<details class="qa"><summary>{esc(q)}</summary><div class="qa__a"><p>{esc(a)}</p></div></details>' for q, a in items) + "</div>"
@@ -322,7 +371,7 @@ def build_index(posts):
 # ---------------------------------------------------------------- 학년×과목 · 학년 · 안내 페이지
 def service_page(slug, title, desc, body, links, depth=1, jsonld=None, extra=""):
     full = f'<div class="page container"><div class="page__grid"><article class="page__main">{body}</article>{aside(depth, links)}</div></div>'
-    write(slug + "index.html", head(title, desc, slug, extra, depth, jsonld) + full + foot(depth))
+    write(slug + "index.html", head(title, desc, slug, extra, depth, jsonld) + full + foot(depth, auto_quick=(slug not in ("contact/", "chat/"))))   # 신청서·실시간 상담 페이지에선 자동 팝업 안 띄움
     return body
 
 def build_keyword_pages(posts):
