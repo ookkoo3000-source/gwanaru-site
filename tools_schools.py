@@ -114,7 +114,7 @@ for r, p in parsed:
     reg = regions.setdefault((sido, sgg), {"sido": sido, "sido_short": SIDO_SHORT.get(sido, sido), "sgg": sgg, "city": a, "gu": b,
                                            "slug": f'{SIDO_SHORT.get(sido, sido)}-{sgg.replace(" ", "-")}' if sido != "세종특별자치시" else "세종-세종시",
                                            "offices": collections.Counter(), "schools": [], "dongs": collections.Counter()})
-    reg["offices"][r["office"]] += 1
+    if r["office"] and "폐지" not in r["office"]: reg["offices"][r["office"]] += 1   # 나이스가 주는 옛 기관명(○○교육청(폐지)) 제외
     if dong and not re.fullmatch(r"\d+.*", dong): reg["dongs"][dong] += 1
     reg["schools"].append({"name": r["name"], "level": r["level"], "type": r["type"], "branch": r["branch"], "dong": dong,
                            "code": r["code"], "office_code": r["office_code"], "coedu": r["coedu"], "hs_type": r["hs_type"], "homepage": r["homepage"]})
