@@ -209,6 +209,11 @@ textarea.field { min-height: 92px; resize: vertical; }
 /* mobile quick bar */
 .quickbar { display: none; }
 
+/* ---------- 실시간 상담(채널톡) 버튼: 데스크톱은 오른쪽 아래 고정, 모바일은 하단 바 안에 ---------- */
+.chat-fab { position: fixed; right: 22px; bottom: 22px; z-index: 70; display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px 12px 14px; border: 0; border-radius: 999px; background: var(--navy); color: #fff; font-weight: 800; font-size: 15px; letter-spacing: -.01em; cursor: pointer; box-shadow: 0 6px 20px rgba(16, 36, 58, .28); transition: background .15s, transform .15s; }
+.chat-fab svg { width: 22px; height: 22px; flex: none; }
+.chat-fab:hover { background: var(--teal-dark); transform: translateY(-1px); }
+
 /* ---------- sub pages ---------- */
 .page { padding: 40px 20px 88px; }
 .page__grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 56px; align-items: start; }
@@ -327,11 +332,14 @@ textarea.field { min-height: 92px; resize: vertical; }
   .quickbar a { display: grid; place-items: center; font-weight: 800; font-size: 15.5px; color: var(--navy); }
   .quickbar .quickbar__main { background: var(--teal); color: #fff; }
   .quickbar.is-hidden { transform: translateY(100%); }
+  .quickbar--chat { grid-template-columns: 1fr 1fr 1.5fr; }
+  .quickbar--chat a { font-size: 14.5px; }
+  .chat-fab { display: none; }
   .apply, .apply__done { margin-bottom: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
 }
 @media print {
-  .site-head, .quickbar, .site-foot, .page__aside, .cta-box { display: none; }
+  .site-head, .quickbar, .chat-fab, .site-foot, .page__aside, .cta-box { display: none; }
 }

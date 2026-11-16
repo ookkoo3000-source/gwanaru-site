@@ -16,6 +16,7 @@ PHONE_INTL = "+82-10-3131-5305"
 NAVER_VERIFY = "64ac0b67207dea819525196a90214d55f59c830e"
 GOOGLE_VERIFY = ""                      # Google Search Console HTML 태그 content 값
 GA_ID = ""                              # GA4 측정 ID(G-XXXX). 비워 두면 분석 스크립트를 넣지 않습니다.
+CHANNEL_KEY = "0da439e6-36c7-4f69-8407-433236fbf3a3"   # 채널톡 플러그인 키(실시간 상담). 비워 두면 버튼·스크립트를 넣지 않습니다.
 FORM_ENDPOINT = "https://formsubmit.co/ajax/ookkoo12@naver.com"   # 웹 접수 → 메일. 첫 제출 시 활성화 메일 확인 필요.
 FORM_SUBJECT = "[과외나루] 상담 신청"
 

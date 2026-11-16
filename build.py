@@ -53,6 +53,18 @@ def analytics():
     return f"""<script async src="https://www.googletagmanager.com/gtag/js?id={D.GA_ID}"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments)}}gtag('js',new Date());gtag('config','{D.GA_ID}',{{anonymize_ip:true}});</script>"""
 
+def chat_widget(rel=""):
+    """채널톡 실시간 상담. 기본 버튼은 숨기고 사이트 디자인에 맞춘 버튼(data-chat)으로 엽니다. 키가 없으면 아무것도 넣지 않습니다."""
+    if not getattr(D, "CHANNEL_KEY", ""): return ""
+    return f"""<button type="button" class="chat-fab" data-chat data-track="chat_click" aria-label="실시간 상담 열기">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.4 3.3A.75.75 0 0 1 4.4 18.7V16A2.5 2.5 0 0 1 4 13.5v-8Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span>실시간 상담</span>
+</button>
+<script>
+(function(){{var w=window;if(w.ChannelIO){{return;}}var ch=function(){{ch.c(arguments);}};ch.q=[];ch.c=function(a){{ch.q.push(a);}};w.ChannelIO=ch;function l(){{if(w.ChannelIOInitialized){{return;}}w.ChannelIOInitialized=true;var s=document.createElement("script");s.type="text/javascript";s.async=true;s.src="https://cdn.channel.io/plugin/ch-plugin-web.js";var x=document.getElementsByTagName("script")[0];if(x.parentNode){{x.parentNode.insertBefore(s,x);}}}}if(document.readyState==="complete"){{l();}}else{{w.addEventListener("DOMContentLoaded",l);w.addEventListener("load",l);}}}})();
+ChannelIO('boot', {{"pluginKey": "{D.CHANNEL_KEY}", "hideChannelButtonOnBoot": true}});
+document.addEventListener('click', function(e){{var b=e.target.closest('[data-chat]');if(b){{e.preventDefault();ChannelIO('showMessenger');}}}});
+</script>"""
+
 def verify_tags():
     t = f'<meta name="naver-site-verification" content="{D.NAVER_VERIFY}">' if D.NAVER_VERIFY else ""
     if D.GOOGLE_VERIFY: t += f'\n<meta name="google-site-verification" content="{D.GOOGLE_VERIFY}">'
@@ -126,7 +138,7 @@ def footer(rel=""):
     <div class="site-foot__brand">
       <a class="logo logo--light" href="{home}">{LOGO_MARK}<span>{D.SITE_NAME}</span></a>
       <p>초·중·고 1:1 방문·화상 과외 상담과 선생님 연결을 안내합니다.</p>
-      <p class="site-foot__tel"><a href="tel:{D.PHONE_RAW}" data-track="tel_click">{D.PHONE}</a><br><small>전화 연결이 어려우면 문자나 <a href="{rel}contact/">상담 신청서</a>를 남겨 주세요. 확인 후 연락드립니다.</small></p>
+      <p class="site-foot__tel"><a href="tel:{D.PHONE_RAW}" data-track="tel_click">{D.PHONE}</a><br><small>전화 연결이 어려우면 화면의 실시간 상담 버튼, 문자, <a href="{rel}contact/">상담 신청서</a>를 이용해 주세요. 확인 후 연락드립니다.</small></p>
     </div>
     <div class="site-foot__cols">
       <div><h2>학년별</h2><ul>{grades}</ul></div>
@@ -136,10 +148,11 @@ def footer(rel=""):
   </div>
   <div class="container site-foot__bottom">© 2026 {D.SITE_NAME}</div>
 </footer>
-<div class="quickbar" id="quickbar">
-  <a href="tel:{D.PHONE_RAW}" data-track="tel_click">전화 상담</a>
+<div class="quickbar{' quickbar--chat' if getattr(D, 'CHANNEL_KEY', '') else ''}" id="quickbar">
+  <a href="tel:{D.PHONE_RAW}" data-track="tel_click">전화 상담</a>{'<a href="#" data-chat data-track="chat_click">실시간 상담</a>' if getattr(D, 'CHANNEL_KEY', '') else ''}
   <a class="quickbar__main" href="{rel}contact/">무료 체험 상담 신청</a>
 </div>
+{chat_widget(rel)}
 <script src="{rel}js/site.js" defer></script>
 </body>
 </html>
