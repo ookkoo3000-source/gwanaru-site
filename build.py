@@ -587,8 +587,29 @@ def exam_table(slug):
     cap = f'{esc(r["sido"])} {esc(r["sgg"])} {esc(r["level"])} {len(r["schools"])}곳의 {int(frm[4:6])}월~{int(to[4:6])}월 시험 관련 학사일정 (나이스 교육정보 개방포털 학사일정, {E["fetched"].get(slug, "")} 조회). 일정을 등록한 학교 {reg_n}곳. 학교 사정으로 바뀔 수 있으니 학교 공지가 우선입니다.'
     return f'<div class="exam-wrap"><table class="exam"><caption>{cap}</caption><thead><tr><th scope="col">학교</th><th scope="col">시험 일정</th></tr></thead><tbody>{"".join(rows)}</tbody></table></div>'
 
+def vacation_table(slug):
+    """학교별 겨울방학 일정표 ({{VACATION_TABLE:slug}}). data/vacation_schedule.json(tools_vacation_schedule.py)."""
+    f = ROOT / "data" / "vacation_schedule.json"
+    if not f.exists(): return ""
+    E = json.loads(f.read_text(encoding="utf-8")); r = E["regions"].get(slug)
+    if not r: return ""
+    def fmt(e):
+        a, z = e["start"], e["end"]
+        d1 = f"{int(a[5:7])}월 {int(a[8:])}일"; d2 = f"{int(z[5:7])}월 {int(z[8:])}일" if z != a else ""
+        return f'{esc(e["name"])} <span class="muted">{d1}{(" ~ " + d2) if d2 else ""}</span>'
+    rows = []
+    for sch in r["schools"]:
+        ev = sch["events"]
+        cell = "<br>".join(fmt(e) for e in ev) if ev else '<span class="muted">나이스 학사일정 미등록</span>'
+        rows.append(f'<tr><th scope="row">{esc(sch["name"])}<small>{esc(sch["type"])}{(" · " + esc(sch["dong"])) if sch["dong"] else ""}</small></th><td>{cell}</td></tr>')
+    reg_n = sum(1 for x in r["schools"] if x["events"])
+    frm, to = r["range"]
+    cap = f'{esc(r["sido"])} {esc(r["sgg"])} {esc(r["level"])} {len(r["schools"])}곳의 {int(frm[:4])}년 {int(frm[4:6])}월~{int(to[:4])}년 {int(to[4:6])}월 방학·종업식·졸업식·개학 학사일정 (나이스 교육정보 개방포털 학사일정, {E["fetched"].get(slug, "")} 조회). 일정을 등록한 학교 {reg_n}곳. 학교 사정으로 바뀔 수 있으니 학교 공지가 우선입니다.'
+    return f'<div class="exam-wrap"><table class="exam"><caption>{cap}</caption><thead><tr><th scope="col">학교</th><th scope="col">겨울방학 관련 일정</th></tr></thead><tbody>{"".join(rows)}</tbody></table></div>'
+
 def expand_shortcodes(html_text):
-    return re.sub(r"\{\{EXAM_TABLE:([^}]+)\}\}", lambda m: exam_table(m.group(1).strip()), html_text)
+    html_text = re.sub(r"\{\{EXAM_TABLE:([^}]+)\}\}", lambda m: exam_table(m.group(1).strip()), html_text)
+    return re.sub(r"\{\{VACATION_TABLE:([^}]+)\}\}", lambda m: vacation_table(m.group(1).strip()), html_text)
 
 # ---------------------------------------------------------------- 블로그
 def slugify(s):
