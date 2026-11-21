@@ -42,8 +42,12 @@ for slug in slugs:
     schools = [s for s in r["schools"] if (level == "all" or s["level"] == level) and s["code"]]
     res = []
     for s in schools:
-        try: ev = fetch(s)
-        except Exception as e: ev = None; print("  오류", s["name"], e)
+        ev = None
+        for attempt in range(3):   # 연결 끊김 등 일시 오류는 재시도 (오류를 '미등록'으로 기록하지 않기 위해)
+            try: ev = fetch(s); break
+            except Exception as e:
+                print(f"  오류({attempt + 1}/3)", s["name"], e); time.sleep(2 * (attempt + 1))
+        else: print("  [확인 필요] 3회 실패 → 미등록으로 기록됨:", s["name"])
         res.append({"name": s["name"], "level": s["level"], "type": s["type"], "coedu": s["coedu"], "hs_type": s["hs_type"], "dong": s["dong"], "events": ev})
         time.sleep(0.15)
     out["regions"][slug] = {"slug": slug, "sido": r["sido"], "sgg": r["sgg"], "level": level, "range": [frm, to], "schools": res}
