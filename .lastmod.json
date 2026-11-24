@@ -1,7 +1,7 @@
 {
 "": {
-"date": "2026-11-21",
-"hash": "f32222e08f097ea5c81e596293dea95846f311a9"
+"date": "2026-11-25",
+"hash": "1db5e488bf754262112b4a5098217222d0499bce"
 },
 "area/": {
 "date": "2026-11-18",
@@ -1216,8 +1216,8 @@
 "hash": "7bf37e8b723e92b4fd52adaf869cfcc3c77c9828"
 },
 "blog/": {
-"date": "2026-11-21",
-"hash": "7d731778e1f0902917ed9ff6f6054f918a151861"
+"date": "2026-11-25",
+"hash": "f2435070c14036c8ddd11aa3c94c808d5946dee9"
 },
 "blog/2026-10-18-how-to-find-tutor/": {
 "date": "2026-10-24",
@@ -1576,8 +1576,8 @@
 "hash": "103fa29bc307d5d75b8e011b689963e3a98d992e"
 },
 "blog/2026-11-17-hwaseong-middle-winter-break/": {
-"date": "2026-11-17",
-"hash": "f1d6ba45b8e3f4bd78d75c7b55a481ac690eb949"
+"date": "2026-11-25",
+"hash": "a3755075f4b7fc951790a7aabc9452d64f58a9d7"
 },
 "blog/2026-11-17-ilsan-donggu-middle-winter-break/": {
 "date": "2026-11-17",
@@ -1683,17 +1683,61 @@
 "date": "2026-11-21",
 "hash": "8086f5dc148e7f9fba25bae1fc07d74af859ecf3"
 },
+"blog/2026-11-25-ansan-danwon-middle-winter-break/": {
+"date": "2026-11-25",
+"hash": "6ba7c2c6dce9bac1c9421ae62180621f3919be00"
+},
+"blog/2026-11-25-ansan-sangnok-middle-winter-break/": {
+"date": "2026-11-25",
+"hash": "a03a386534164396bd687a3fd0082f5cf7303dc0"
+},
+"blog/2026-11-25-gunpo-middle-winter-break/": {
+"date": "2026-11-25",
+"hash": "872c75847c0b9279af41c6ba87bbc7108905be44"
+},
+"blog/2026-11-25-gwonseon-middle-winter-break/": {
+"date": "2026-11-25",
+"hash": "94ec0aa72647e45e68a5baf8ed3f4eb3ec494bd0"
+},
+"blog/2026-11-25-gyeyang-middle-winter-break/": {
+"date": "2026-11-25",
+"hash": "49a56660931e63f1ac7955a4ae66234596128efa"
+},
+"blog/2026-11-25-jungwon-middle-winter-break/": {
+"date": "2026-11-25",
+"hash": "ec12faf74fc7cda4efa60129e65f92fbc5694b0f"
+},
+"blog/2026-11-25-manan-middle-winter-break/": {
+"date": "2026-11-25",
+"hash": "365f7eb1228fc2c419a9b723f9586b8ebd2e94c2"
+},
+"blog/2026-11-25-namdong-middle-winter-break/": {
+"date": "2026-11-25",
+"hash": "751b928396bd2dfa9a0c4c3cc12ad5dc11a08e0c"
+},
+"blog/2026-11-25-paju-middle-winter-break/": {
+"date": "2026-11-25",
+"hash": "3f2116667e51fba54786426ab72a74e1963da348"
+},
+"blog/2026-11-25-siheung-middle-winter-break/": {
+"date": "2026-11-25",
+"hash": "6dc0e056746aefd3ff9737face7595aaf358f894"
+},
 "blog/page/2/": {
-"date": "2026-11-21",
-"hash": "782a87a370e9eb3f3f534d320a29e98cd22b90ce"
+"date": "2026-11-25",
+"hash": "f2ac555524406a9822f20c758dbd2e68034e394d"
 },
 "blog/page/3/": {
-"date": "2026-11-21",
-"hash": "0ab9e62b2dcf2486697326ff34e8908e2ad831f4"
+"date": "2026-11-25",
+"hash": "0657c1efb5c1f64a86177684c5cc5f301bc57716"
 },
 "blog/page/4/": {
-"date": "2026-11-21",
-"hash": "18b31f61c4f9d5796be8560fc881e75658db073f"
+"date": "2026-11-25",
+"hash": "cd6b75bd65490d84af6eb90ebbb0a64c9bcbb7d8"
+},
+"blog/page/5/": {
+"date": "2026-11-25",
+"hash": "14bb942e787071509ca4e46e48c3eb66e0838bc8"
 },
 "chat/": {
 "date": "2026-11-16",
@@ -1708,36 +1752,36 @@
 "hash": "115a5cca2539bd4e7e3fb44fe114f8a9358cefb6"
 },
 "elementary-english/": {
-"date": "2026-11-18",
-"hash": "6453b37d8d7176aa1ce383c405de6895cb6c15e0"
+"date": "2026-11-25",
+"hash": "1e94ed6cf8a4eb235ca258b86f203d1c854871f5"
 },
 "elementary-korean/": {
-"date": "2026-11-21",
-"hash": "b7cbd5d8d7cbb70716c4b31a22927f253e320956"
+"date": "2026-11-25",
+"hash": "b28e2db27937fb8a6a4e7ba330e44969b5b801d9"
 },
 "elementary-math/": {
-"date": "2026-11-21",
-"hash": "ff7a529e7b6bf180b136277cb2980612cf4596c1"
+"date": "2026-11-25",
+"hash": "329322db13d4b62c64015151a0ed42fe73e4acc5"
 },
 "elementary-science/": {
 "date": "2026-11-21",
 "hash": "60bb6532fc1e44a1fb86aa8042fb658da6d99baa"
 },
 "elementary-social/": {
-"date": "2026-11-21",
-"hash": "18d330c9cb6e1c742aae41a6ec5341528a38a432"
+"date": "2026-11-25",
+"hash": "9aeca8018a962e3fe409cfcb76c84d2c3ccb52a1"
 },
 "elementary/": {
 "date": "2026-11-01",
 "hash": "d97857864e914440b13dd7a8adb2ee02eb8ad4a7"
 },
 "high-english/": {
-"date": "2026-11-18",
-"hash": "f3658e8d58de7bdbd762638706e0e55011ba9d95"
+"date": "2026-11-25",
+"hash": "10d6f13d57f23440a3c5f9c83db63b3ec6e87d87"
 },
 "high-korean/": {
-"date": "2026-11-21",
-"hash": "12819373e6a25a151cb14bbfbafbb7ce3e9ae34f"
+"date": "2026-11-25",
+"hash": "162cc5b405e182da3e909b4056c224326b87bed9"
 },
 "high-math/": {
 "date": "2026-10-24",
@@ -1748,8 +1792,8 @@
 "hash": "cb3590c9449953ab705b86a24e8b3685903c919d"
 },
 "high-social/": {
-"date": "2026-11-21",
-"hash": "f1b8322f31f62b5918941494718450993c3c9690"
+"date": "2026-11-25",
+"hash": "550530009aa3dca49f1d86494b4a581d8fd2b8a8"
 },
 "high/": {
 "date": "2026-11-01",
@@ -1760,8 +1804,8 @@
 "hash": "4670f91f0a67b635d11ec14264076c997baf6a22"
 },
 "middle-korean/": {
-"date": "2026-11-21",
-"hash": "2bb532f65c2d9440fe74f029a4ce30b3d21d1bf7"
+"date": "2026-11-25",
+"hash": "b2b844b89d83388ee919320d0298ebfa00294c5a"
 },
 "middle-math/": {
 "date": "2026-10-24",
@@ -1772,12 +1816,12 @@
 "hash": "bf3e44133442a9b4bef16aa286bf3cef72171f37"
 },
 "middle-social/": {
-"date": "2026-11-21",
-"hash": "2941c171ea3c8406299295d0c238ddb8a4275c04"
+"date": "2026-11-25",
+"hash": "a20b99dfda71b6d21fd9222ca0a02d8d2f57fb95"
 },
 "middle/": {
-"date": "2026-11-21",
-"hash": "6c409a55aa6d4b284899a450160d5a271b5f673b"
+"date": "2026-11-25",
+"hash": "518b5109bf1c6fe7c323c6040b5c4571dcbe2773"
 },
 "online/": {
 "date": "2026-10-24",
