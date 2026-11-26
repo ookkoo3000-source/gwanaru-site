@@ -33336,18 +33336,6 @@
 "homepage": "http://hoeam-m.goedy.kr"
 },
 {
-"name": "회천4중(개교예정)",
-"level": "중학교",
-"type": "공립",
-"branch": false,
-"dong": "",
-"code": "       ",
-"office_code": "J10",
-"coedu": "남여공학",
-"hs_type": "",
-"homepage": "http://"
-},
-{
 "name": "회천중학교",
 "level": "중학교",
 "type": "공립",
@@ -33394,18 +33382,6 @@
 "coedu": "남여공학",
 "hs_type": "일반고",
 "homepage": "https://deokhyeon-h.goedy.kr"
-},
-{
-"name": "양주2고(개교예정)",
-"level": "고등학교",
-"type": "공립",
-"branch": false,
-"dong": "",
-"code": "       ",
-"office_code": "J10",
-"coedu": "남여공학",
-"hs_type": "일반고",
-"homepage": "http://"
 },
 {
 "name": "양주고등학교",
@@ -33480,8 +33456,8 @@
 "광적면",
 "만송동"
 ],
-"mid": 14,
-"high": 9
+"mid": 13,
+"high": 8
 },
 {
 "sido": "경기도",
@@ -34188,18 +34164,6 @@
 "homepage": "http://gasu-m.goehs.kr"
 },
 {
-"name": "남양2중학교(개교예정)",
-"level": "중학교",
-"type": "공립",
-"branch": false,
-"dong": "",
-"code": "       ",
-"office_code": "J10",
-"coedu": "남여공학",
-"hs_type": "",
-"homepage": "http://"
-},
-{
 "name": "대호중학교",
 "level": "중학교",
 "type": "공립",
@@ -34438,7 +34402,7 @@
 "오산동",
 "부산동"
 ],
-"mid": 11,
+"mid": 10,
 "high": 10
 },
 {
