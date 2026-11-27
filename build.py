@@ -430,6 +430,10 @@ def build_keyword_pages(posts):
              "<h2>이런 경우에 맞습니다</h2><ul class=\"plain\">" + "".join(f"<li>{esc(x)}</li>" for x in p["fit"]) + "</ul>",
              "<h2>자주 묻는 질문</h2>" + faq_html(p["faq"]),
              related_posts_html(posts, "../", slugs={"online": ["2026-10-19-online-vs-visit-tutoring", "2026-10-21-pre-high-english-prep"], "visit": ["2026-10-19-online-vs-visit-tutoring", "2026-10-24-elementary-math-tutoring-cost"], "cost": ["2026-10-23-middle-math-tutoring-cost", "2026-10-24-high-math-tutoring-cost", "2026-10-24-elementary-math-tutoring-cost"]}[key])]
+        if key == "visit":
+            b.insert(3, '<h2>사는 지역에서 방문과외 찾기</h2>'
+                     '<p><a href="../area/">전국 지역별 과외 안내</a>에서 시·도와 시·군·구를 선택하세요. '
+                     '학년·과목과 희망 요일을 알려주시면 방문 가능한 선생님이 있는지 확인해 드립니다.</p>')
         body = service_page(slug, title, p["desc"], "\n".join(b), [(f'{o["name"]} 과외', f"{ok}/") for ok, o in D.GRADES.items()] + [(q["title"], f"{qk}/") for qk, q in D.EXTRA_PAGES.items() if qk != key], 1, faq_ld(p["faq"]))
         pages.append((slug, lastmod_for(slug, body), "0.9"))
 
@@ -572,7 +576,7 @@ def build_area(posts):
         for r in lst:
             label = f'{r["city"]} {r["gu"]}' if r["gu"] else r["sgg"]
             li.append(f'<li><a href="../{Q(r["slug"])}/">{esc(label)} 중·고등 수학·영어 과외</a><span>중 {r["mid"]} · 고 {r["high"]}</span></li>')
-        title = f'{sido} 지역별 과외 | 시·군·구 {len(lst)}곳, 중·고등학교 {mid + high}곳 | {D.SITE_NAME}'
+        title = f'{sido} 지역별 중·고등 수학·영어 과외 | 방문·화상 상담 | {D.SITE_NAME}'
         desc = f'{sido} {len(lst)}개 시·군·구의 중학교 {mid}곳·고등학교 {high}곳 학생을 위한 1:1 과외 상담. 지역을 고르면 그 지역 학교 목록과 상담 안내를 볼 수 있습니다.'
         body = f"""{crumbs(2, ("지역별 과외", "area/"), (sido, None))}
 <h1>{esc(sido)} 지역별 과외</h1>
@@ -588,10 +592,10 @@ def build_area(posts):
     slug = "area/"
     li = "".join(f'<li><a href="{Q(short)}/">{esc(sido)}</a><span>{len(lst)}개 지역 · 중·고 {sum(r["mid"] + r["high"] for r in lst)}곳</span></li>' for (sido, short), lst in by_sido.items())
     total = sum(len(r["schools"]) for r in regs)
-    title = f"지역별 과외 안내 | 전국 시·군·구 {len(regs)}곳 중·고등학교 {total}곳 | {D.SITE_NAME}"
+    title = f"전국 지역별 중·고등 수학·영어 과외 | 방문·화상 상담 | {D.SITE_NAME}"
     desc = f"전국 {len(regs)}개 시·군·구의 중·고등학교 {total}곳 학생을 위한 1:1 과외 상담 안내. 지역을 고르면 그 지역 학교 목록을 볼 수 있습니다. 화상은 전국, 방문은 상담에서 확인."
     body = f"""{crumbs(1, ("지역별 과외", None))}
-<h1>지역별 과외 안내</h1>
+<h1>전국 지역별 중·고등 수학·영어 과외</h1>
 <p class="lead">사는 지역을 고르면 그 지역 중·고등학교 목록과 상담 안내를 볼 수 있습니다. 화상 수업은 전국 어디서나 가능하고, 방문은 지역·과목·시간대에 따라 상담에서 확인해 드립니다. 해외 거주 학생도 화상으로 한국 교과 과정 수업이 가능합니다.</p>
 <h2>시·도 선택</h2>
 <ul class="post-list area-list">{li}</ul>
