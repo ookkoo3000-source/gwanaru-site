@@ -501,8 +501,8 @@ def build_area(posts):
             name = f'{r["city"]} {r["gu"]}'.strip() if r["gu"] else r["sgg"]
             short_name = r["gu"] or r["sgg"]
             region_name = f"{short} {name}" if not name.startswith(short + " ") and name != short else name
-            title = f"{region_name} 중등 수학·영어 과외 | 방문·화상 무료 체험 | {D.SITE_NAME}"
-            desc = f"{region_name} 중학생 수학·영어 내신 1:1 과외 상담. 화상 수업은 전국 가능하며 방문 가능 여부는 동네·과목·시간대에 따라 확인합니다. 무료 체험과 수업료 안내."
+            title = f"{region_name} 중·고등 수학·영어 과외 | 방문·화상 무료 체험 | {D.SITE_NAME}"
+            desc = f"{region_name} 중·고등학생 수학·영어 내신 및 수능 대비 1:1 과외 상담. 화상 수업은 전국 가능하며 방문 가능 여부는 동네·과목·시간대에 따라 확인합니다. 무료 체험과 수업료 안내."
             def school_list(level):
                 items = [x for x in r["schools"] if x["level"] == level]
                 if not items: return f"<p class=\"muted\">{level} 없음</p>"
@@ -532,12 +532,17 @@ def build_area(posts):
             # 상담 안내 — 방문 가능 지역은 운영자 확인 전이므로 모든 지역에서 "상담에서 확인" (CLAIMS_TO_CONFIRM)
             consult = f'''<section class="cta-box" aria-labelledby="area-cta-h"><div><h2 id="area-cta-h">{esc(short_name)} 학생 상담</h2><p><a href="../../online/">화상과외</a>는 {esc(short_name)} 어디서나 바로 상담할 수 있습니다. <a href="../../visit/">방문과외</a>는 {esc(r["sgg"])} 안에서 가능한 선생님이 있는지 상담에서 확인해 드리고, 어려우면 화상으로 안내합니다. 상담과 {D.TRIAL}은 무료입니다.</p></div><div class="cta-box__actions"><a class="btn btn--primary btn--lg" href="../../contact/">무료 체험 상담하기</a><a class="btn btn--line btn--lg" href="tel:{D.PHONE_RAW}" data-track="tel_click">전화 상담하기</a></div></section>'''
             body = f"""{crumbs(2, ("지역별 과외", "area/"), (sido, f"area/{Q(short)}/"), (short_name, None))}
-<h1>{esc(region_name)} 중등 수학·영어 과외</h1>
-<p class="lead">{esc(region_name)} 중학생의 1:1 수학·영어 수업을 상담합니다. 화상 수업은 전국에서 가능하며, 방문 수업은 거주 동네·과목·희망 시간대에 맞는 선생님이 있는지 확인해 드립니다.</p>
+<h1>{esc(region_name)} 중·고등 수학·영어 과외</h1>
+<p class="lead">{esc(region_name)} 중·고등학생의 1:1 수학·영어 과외를 상담합니다. 중등 내신과 고등 내신·수능 대비 수업을 안내합니다. 화상 수업은 전국에서 가능하며, 방문 수업은 거주 동네·과목·희망 시간대에 맞는 선생님이 있는지 확인해 드립니다.</p>
 <h2>중등 수학·영어 수업에서 보는 내용</h2>
 <ul class="plain">
 <li><a href="../../middle-math/">중등 수학 과외</a>는 최근 오답과 풀이 과정을 보고 막히는 개념을 찾습니다. 학교 시험 범위에 맞춰 유형과 서술형 풀이를 연습합니다.</li>
 <li><a href="../../middle-english/">중등 영어 과외</a>는 단어·문법·독해 중 어려운 부분을 확인하고, 학교 교과서 본문과 시험 범위에 맞춰 서술형을 연습합니다.</li>
+</ul>
+<h2>고등 내신·수능 수업에서 보는 내용</h2>
+<ul class="plain">
+<li><a href="../../high-math/">고등 수학 과외</a>는 학교 시험 범위의 개념과 서술형을 점검하고, 수능 준비 시에는 모의고사 오답을 바탕으로 취약 유형을 연습합니다.</li>
+<li><a href="../../high-english/">고등 영어 과외</a>는 내신 교과서와 시험 지문의 어법·서술형을 살펴보고, 수능 준비 시에는 모의고사 지문으로 독해 전략을 연습합니다.</li>
 </ul>
 <p>무료 체험에서는 선생님의 설명 방식과 아이가 질문하기 편한지 확인할 수 있습니다. 수업료는 학년·과목·수업 시간과 희망 조건을 확인한 뒤 안내합니다. <a href="../../cost/">수업료 상담 안내</a></p>
 {consult}
@@ -566,7 +571,7 @@ def build_area(posts):
         li = []
         for r in lst:
             label = f'{r["city"]} {r["gu"]}' if r["gu"] else r["sgg"]
-            li.append(f'<li><a href="../{Q(r["slug"])}/">{esc(label)} 중등 수학·영어 과외</a><span>중 {r["mid"]} · 고 {r["high"]}</span></li>')
+            li.append(f'<li><a href="../{Q(r["slug"])}/">{esc(label)} 중·고등 수학·영어 과외</a><span>중 {r["mid"]} · 고 {r["high"]}</span></li>')
         title = f'{sido} 지역별 과외 | 시·군·구 {len(lst)}곳, 중·고등학교 {mid + high}곳 | {D.SITE_NAME}'
         desc = f'{sido} {len(lst)}개 시·군·구의 중학교 {mid}곳·고등학교 {high}곳 학생을 위한 1:1 과외 상담. 지역을 고르면 그 지역 학교 목록과 상담 안내를 볼 수 있습니다.'
         body = f"""{crumbs(2, ("지역별 과외", "area/"), (sido, None))}
