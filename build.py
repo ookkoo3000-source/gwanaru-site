@@ -500,10 +500,9 @@ def build_area(posts):
             slug = f"area/{r['slug']}/"
             name = f'{r["city"]} {r["gu"]}'.strip() if r["gu"] else r["sgg"]
             short_name = r["gu"] or r["sgg"]
-            n = r["mid"] + r["high"]
-            ex = [x["name"] for x in r["schools"]][:3]
-            title = f'{name} 과외 | 중·고등학교 {n}곳 학생 1:1 방문·화상 상담 | {D.SITE_NAME}'
-            desc = f'{sido} {r["sgg"]} 중학교 {r["mid"]}곳·고등학교 {r["high"]}곳({", ".join(ex)} 등) 학생을 위한 수학·영어·국어 1:1 과외 상담. 화상은 전국 어디서나, 방문은 지역·시간대에 따라 상담에서 확인. 상담과 {D.TRIAL}은 무료.'
+            region_name = f"{short} {name}" if not name.startswith(short + " ") and name != short else name
+            title = f"{region_name} 중등 수학·영어 과외 | 방문·화상 무료 체험 | {D.SITE_NAME}"
+            desc = f"{region_name} 중학생 수학·영어 내신 1:1 과외 상담. 화상 수업은 전국 가능하며 방문 가능 여부는 동네·과목·시간대에 따라 확인합니다. 무료 체험과 수업료 안내."
             def school_list(level):
                 items = [x for x in r["schools"] if x["level"] == level]
                 if not items: return f"<p class=\"muted\">{level} 없음</p>"
@@ -533,8 +532,15 @@ def build_area(posts):
             # 상담 안내 — 방문 가능 지역은 운영자 확인 전이므로 모든 지역에서 "상담에서 확인" (CLAIMS_TO_CONFIRM)
             consult = f'''<section class="cta-box" aria-labelledby="area-cta-h"><div><h2 id="area-cta-h">{esc(short_name)} 학생 상담</h2><p><a href="../../online/">화상과외</a>는 {esc(short_name)} 어디서나 바로 상담할 수 있습니다. <a href="../../visit/">방문과외</a>는 {esc(r["sgg"])} 안에서 가능한 선생님이 있는지 상담에서 확인해 드리고, 어려우면 화상으로 안내합니다. 상담과 {D.TRIAL}은 무료입니다.</p></div><div class="cta-box__actions"><a class="btn btn--primary btn--lg" href="../../contact/">무료 체험 상담하기</a><a class="btn btn--line btn--lg" href="tel:{D.PHONE_RAW}" data-track="tel_click">전화 상담하기</a></div></section>'''
             body = f"""{crumbs(2, ("지역별 과외", "area/"), (sido, f"area/{Q(short)}/"), (short_name, None))}
-<h1>{esc(name)} 수학·영어 과외 <span class="muted">{esc(short)}</span></h1>
-<p class="lead">{esc(sido)} {esc(r["sgg"])}에 있는 중학교 {r["mid"]}곳, 고등학교 {r["high"]}곳 학생의 1:1 과외를 상담합니다. 화상 수업은 지역과 관계없이 가능하고, 방문은 지역·과목·시간대에 따라 상담에서 확인해 드립니다. 상담과 {D.TRIAL}은 무료입니다.</p>
+<h1>{esc(region_name)} 중등 수학·영어 과외</h1>
+<p class="lead">{esc(region_name)} 중학생의 1:1 수학·영어 수업을 상담합니다. 화상 수업은 전국에서 가능하며, 방문 수업은 거주 동네·과목·희망 시간대에 맞는 선생님이 있는지 확인해 드립니다.</p>
+<h2>중등 수학·영어 수업에서 보는 내용</h2>
+<ul class="plain">
+<li><a href="../../middle-math/">중등 수학 과외</a>는 최근 오답과 풀이 과정을 보고 막히는 개념을 찾습니다. 학교 시험 범위에 맞춰 유형과 서술형 풀이를 연습합니다.</li>
+<li><a href="../../middle-english/">중등 영어 과외</a>는 단어·문법·독해 중 어려운 부분을 확인하고, 학교 교과서 본문과 시험 범위에 맞춰 서술형을 연습합니다.</li>
+</ul>
+<p>무료 체험에서는 선생님의 설명 방식과 아이가 질문하기 편한지 확인할 수 있습니다. 수업료는 학년·과목·수업 시간과 희망 조건을 확인한 뒤 안내합니다. <a href="../../cost/">수업료 상담 안내</a></p>
+{consult}
 <h2>{esc(short_name)} 중학교 {r["mid"]}곳</h2>
 {school_list("중학교")}
 <h2>{esc(short_name)} 고등학교 {r["high"]}곳</h2>
@@ -542,7 +548,6 @@ def build_area(posts):
 {note}
 {composition}
 {related}
-{consult}
 {f'<h2>주요 지역</h2><p>{esc(dongs)} 등 {esc(short_name)} 전역의 학생이 상담 대상입니다. 관할 교육지원청: {esc(", ".join(r["offices"]))}.</p>' if dongs else f'<h2>관할 교육지원청</h2><p>{esc(", ".join(r["offices"]))}</p>'}
 <h2>{esc(short_name)} 학생 상담에서 확인하는 것</h2>
 <ul class="plain"><li>학교 이름 — 같은 {esc(short_name)} 안에서도 학교마다 교과서 출판사와 시험 범위·출제 방식이 다르므로, 수업은 아이가 다니는 학교 기준으로 맞춥니다</li><li>학년과 과목, 최근 시험에서 틀린 유형</li><li>희망 요일·시간대와 방문·화상 선호 — 방문을 원하시면 {esc(r["sgg"])} 안에서 가능한 선생님이 있는지 확인해 드리고, 어려우면 화상으로 안내합니다</li><li>아이 성향 — 옆에서 봐 줘야 집중이 되는지, 화면으로 소통이 되는지</li></ul>
@@ -561,7 +566,7 @@ def build_area(posts):
         li = []
         for r in lst:
             label = f'{r["city"]} {r["gu"]}' if r["gu"] else r["sgg"]
-            li.append(f'<li><a href="../{Q(r["slug"])}/">{esc(label)} 과외</a><span>중 {r["mid"]} · 고 {r["high"]}</span></li>')
+            li.append(f'<li><a href="../{Q(r["slug"])}/">{esc(label)} 중등 수학·영어 과외</a><span>중 {r["mid"]} · 고 {r["high"]}</span></li>')
         title = f'{sido} 지역별 과외 | 시·군·구 {len(lst)}곳, 중·고등학교 {mid + high}곳 | {D.SITE_NAME}'
         desc = f'{sido} {len(lst)}개 시·군·구의 중학교 {mid}곳·고등학교 {high}곳 학생을 위한 1:1 과외 상담. 지역을 고르면 그 지역 학교 목록과 상담 안내를 볼 수 있습니다.'
         body = f"""{crumbs(2, ("지역별 과외", "area/"), (sido, None))}
