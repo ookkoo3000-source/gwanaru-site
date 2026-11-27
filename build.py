@@ -511,6 +511,27 @@ def build_area(posts):
             dongs = " · ".join(r["dongs"]) if r["dongs"] else ""
             others = sorted((o for o in lst if o is not r), key=lambda o: (o["city"] != r["city"], o["sgg"]))   # 같은 시의 다른 구 먼저
             siblings = [(f'{(o["city"] + " " + o["gu"]) if o["gu"] else o["sgg"]} 과외', f'area/{Q(o["slug"])}/') for o in others][:10]
+            # 지역 고유 내용 ① 학교 구성(나이스 데이터) — 설립·남녀공학·고교 유형
+            def cnt(items, key): 
+                c = {}
+                for x in items: c[x[key]] = c.get(x[key], 0) + 1
+                return c
+            mids = [x for x in r["schools"] if x["level"] == "중학교"]; highs = [x for x in r["schools"] if x["level"] == "고등학교"]
+            ty = cnt(r["schools"], "type"); co = cnt(r["schools"], "coedu"); ht = cnt([x for x in highs if x["hs_type"]], "hs_type")
+            comp = []
+            if len(ty) == 1: comp.append(f"{len(r['schools'])}곳 모두 {next(iter(ty))} 학교입니다")
+            elif ty: comp.append("설립 유형은 " + "·".join(f"{k} {v}곳" for k, v in sorted(ty.items(), key=lambda kv: -kv[1])) + "입니다")
+            if co.get("남") or co.get("여"): comp.append(f'남녀공학 {co.get("남여공학", 0)}곳 외에 ' + ", ".join(f"{lbl} {co[k]}곳" for k, lbl in (("남", "남학교"), ("여", "여학교")) if co.get(k)) + "이 있어 학교에 따라 학습 분위기가 다릅니다")
+            else: comp.append("중·고등학교 모두 남녀공학입니다")
+            if len(ht) == 1: comp.append(f"고등학교 {len(highs)}곳은 {'모두 ' if len(highs) > 1 else ''}{next(iter(ht))}입니다")
+            elif ht: comp.append("고등학교는 " + "·".join(f"{k} {v}곳" for k, v in sorted(ht.items(), key=lambda kv: -kv[1])) + "으로 나뉘어, 같은 학년이라도 교과서와 내신 범위가 학교마다 다릅니다")
+            if r["dongs"]: comp.append(f'학교가 있는 동은 {len(r["dongs"])}곳입니다')
+            composition = f'<h2>{esc(short_name)} 학교 구성</h2><p>{esc(". ".join(comp))}.</p>'
+            # 지역 고유 내용 ② 이 지역 학교 데이터로 쓴 글(시험·방학 일정)
+            region_posts = [p for p in posts if p["region"] == r["slug"]]
+            related = ("<h2>" + esc(short_name) + " 학교 일정 글</h2><p>이 지역 학교들의 나이스 학사일정을 학교별로 정리한 글입니다.</p><ul class=\"post-list\">" + "".join(f'<li><a href="../../blog/{p["slug"]}/">{esc(p["title"])}</a><span>{p["date"].isoformat()}</span></li>' for p in region_posts[:4]) + "</ul>") if region_posts else ""
+            # 상담 안내 — 방문 가능 지역은 운영자 확인 전이므로 모든 지역에서 "상담에서 확인" (CLAIMS_TO_CONFIRM)
+            consult = f'''<section class="cta-box" aria-labelledby="area-cta-h"><div><h2 id="area-cta-h">{esc(short_name)} 학생 상담</h2><p><a href="../../online/">화상과외</a>는 {esc(short_name)} 어디서나 바로 상담할 수 있습니다. <a href="../../visit/">방문과외</a>는 {esc(r["sgg"])} 안에서 가능한 선생님이 있는지 상담에서 확인해 드리고, 어려우면 화상으로 안내합니다. 상담과 {D.TRIAL}은 무료입니다.</p></div><div class="cta-box__actions"><a class="btn btn--primary btn--lg" href="../../contact/">무료 체험 상담하기</a><a class="btn btn--line btn--lg" href="tel:{D.PHONE_RAW}" data-track="tel_click">전화 상담하기</a></div></section>'''
             body = f"""{crumbs(2, ("지역별 과외", "area/"), (sido, f"area/{Q(short)}/"), (short_name, None))}
 <h1>{esc(name)} 수학·영어 과외 <span class="muted">{esc(short)}</span></h1>
 <p class="lead">{esc(sido)} {esc(r["sgg"])}에 있는 중학교 {r["mid"]}곳, 고등학교 {r["high"]}곳 학생의 1:1 과외를 상담합니다. 화상 수업은 지역과 관계없이 가능하고, 방문은 지역·과목·시간대에 따라 상담에서 확인해 드립니다. 상담과 {D.TRIAL}은 무료입니다.</p>
@@ -519,6 +540,9 @@ def build_area(posts):
 <h2>{esc(short_name)} 고등학교 {r["high"]}곳</h2>
 {school_list("고등학교")}
 {note}
+{composition}
+{related}
+{consult}
 {f'<h2>주요 지역</h2><p>{esc(dongs)} 등 {esc(short_name)} 전역의 학생이 상담 대상입니다. 관할 교육지원청: {esc(", ".join(r["offices"]))}.</p>' if dongs else f'<h2>관할 교육지원청</h2><p>{esc(", ".join(r["offices"]))}</p>'}
 <h2>{esc(short_name)} 학생 상담에서 확인하는 것</h2>
 <ul class="plain"><li>학교 이름 — 같은 {esc(short_name)} 안에서도 학교마다 교과서 출판사와 시험 범위·출제 방식이 다르므로, 수업은 아이가 다니는 학교 기준으로 맞춥니다</li><li>학년과 과목, 최근 시험에서 틀린 유형</li><li>희망 요일·시간대와 방문·화상 선호 — 방문을 원하시면 {esc(r["sgg"])} 안에서 가능한 선생님이 있는지 확인해 드리고, 어려우면 화상으로 안내합니다</li><li>아이 성향 — 옆에서 봐 줘야 집중이 되는지, 화면으로 소통이 되는지</li></ul>
@@ -632,10 +656,11 @@ def load_posts():
         if isinstance(date, str): date = datetime.date.fromisoformat(date[:10])
         slug = meta.get("slug") or slugify(f.stem)
         body_html = expand_shortcodes(markdown.markdown(body_md, extensions=["extra", "sane_lists"]))
+        region = re.search(r"\{\{(?:EXAM|VACATION)_TABLE:([^}]+)\}\}", body_md)   # 지역 페이지 "관련 글" 연결용
         plain = re.sub(r"<[^>]+>", "", body_html)
         desc = meta.get("description") or re.sub(r"\s+", " ", plain).strip()[:150]
         posts.append({"title": str(meta["title"]), "date": date, "slug": slug, "html": body_html, "desc": desc,
-                      "keywords": meta.get("keywords", ""), "grade": meta.get("grade", ""), "subject": meta.get("subject", ""), "updated": str(meta.get("updated", "") or "")})
+                      "keywords": meta.get("keywords", ""), "grade": meta.get("grade", ""), "subject": meta.get("subject", ""), "updated": str(meta.get("updated", "") or ""), "region": region.group(1).strip() if region else ""})
     posts.sort(key=lambda p: (p["date"], p["slug"]), reverse=True)
     return posts
 
